@@ -22,6 +22,12 @@ class WorkerNode:
         self.socket = None
         self.int_segments: Dict[str, np.ndarray] = {}
         self.double_segments: Dict[str, np.ndarray] = {}
+        
+        # Separate storage for replicas
+        self.int_replicas: Dict[str, np.ndarray] = {}
+        self.double_replicas: Dict[str, np.ndarray] = {}
+        self.is_primary: Dict[str, bool] = {}
+        
         self.running = True
         self.thread_pool = ThreadPoolExecutor(max_workers=self.cores)
         self.setup_logging()
@@ -111,6 +117,10 @@ class WorkerNode:
     def handle_message(self, message: Message):
         if message.type == MessageType.DISTRIBUTE_ARRAY:
             self.handle_distribute_array(message)
+        elif message.type == MessageType.REPLICATE_DATA:
+            self.handle_replicate_data(message)
+        elif message.type == MessageType.RECOVER_DATA:
+            self.handle_recover_data(message)
         elif message.type == MessageType.PROCESS_SEGMENT:
             self.handle_process_segment(message)
         elif message.type == MessageType.SHUTDOWN:
@@ -121,13 +131,69 @@ class WorkerNode:
         array_id = data['arrayId']
         data_type = data['dataType']
         segment_data = data['data']
+        is_primary = data.get('isPrimary', True)  # Default to primary for backwards compatibility
+        
+        segment_key = f"{array_id}_{data.get('segmentId', 0)}"
+        self.is_primary[segment_key] = is_primary
         
         if data_type == 'int':
-            self.int_segments[array_id] = np.array(segment_data, dtype=np.int32)
-            self.logger.info(f"Received int array segment: {array_id} with {len(segment_data)} elements")
+            arr = np.array(segment_data, dtype=np.int32)
+            if is_primary:
+                self.int_segments[array_id] = arr
+                self.logger.info(f"Received PRIMARY int array segment: {array_id} with {len(segment_data)} elements")
+            else:
+                self.int_replicas[segment_key] = arr
+                self.logger.info(f"Received REPLICA int array segment: {segment_key} with {len(segment_data)} elements")
         else:
-            self.double_segments[array_id] = np.array(segment_data, dtype=np.float64)
-            self.logger.info(f"Received double array segment: {array_id} with {len(segment_data)} elements")
+            arr = np.array(segment_data, dtype=np.float64)
+            if is_primary:
+                self.double_segments[array_id] = arr
+                self.logger.info(f"Received PRIMARY double array segment: {array_id} with {len(segment_data)} elements")
+            else:
+                self.double_replicas[segment_key] = arr
+                self.logger.info(f"Received REPLICA double array segment: {segment_key} with {len(segment_data)} elements")
+    
+    def handle_replicate_data(self, message: Message):
+        # Same logic as distribute but always stored as replica
+        data = message.data
+        data['isPrimary'] = False
+        self.handle_distribute_array(message)
+    
+    def handle_recover_data(self, message: Message):
+        data = message.data
+        array_id = data['arrayId']
+        segment_id = data['segmentId']
+        make_primary = data.get('makePrimary', False)
+        
+        segment_key = f"{array_id}_{segment_id}"
+        
+        if make_primary:
+            # Promote replica to primary
+            int_replica = self.int_replicas.get(segment_key)
+            double_replica = self.double_replicas.get(segment_key)
+            
+            if int_replica is not None:
+                self.int_segments[array_id] = int_replica
+                self.is_primary[segment_key] = True
+                self.logger.info(f"Promoted int replica to primary for {segment_key}")
+            elif double_replica is not None:
+                self.double_segments[array_id] = double_replica
+                self.is_primary[segment_key] = True
+                self.logger.info(f"Promoted double replica to primary for {segment_key}")
+            
+            # Send recovery complete message
+            response_data = {
+                "arrayId": array_id,
+                "segmentId": segment_id,
+                "status": "recovered"
+            }
+            response = Message(
+                MessageType.RECOVERY_COMPLETE,
+                self.worker_id,
+                "master",
+                response_data
+            )
+            self.socket.send(response.to_json().encode() + b'\n')
     
     def handle_process_segment(self, message: Message):
         data = message.data

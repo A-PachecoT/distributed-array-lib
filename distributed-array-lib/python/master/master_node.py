@@ -32,6 +32,12 @@ class MasterNode:
         self.double_arrays: Dict[str, DArrayDouble] = {}
         self.running = True
         self.executor = ThreadPoolExecutor(max_workers=20)
+        
+        # Replication tracking
+        self.segment_replicas: Dict[str, Dict[int, List[str]]] = {}
+        self.worker_segments: Dict[str, set] = {}
+        self.REPLICATION_FACTOR = 2  # Primary + 1 replica
+        
         self.setup_logging()
     
     def setup_logging(self):
@@ -170,64 +176,136 @@ class MasterNode:
     
     def distribute_int_array(self, array: DArrayInt):
         worker_list = list(self.workers.values())
+        if not worker_list:
+            self.logger.error("No workers available for distribution")
+            return
+        
         worker_index = 0
+        self.segment_replicas[array.array_id] = {}
         
         for segment in array.segments:
             if worker_index >= len(worker_list):
                 worker_index = 0
             
-            worker = worker_list[worker_index]
+            primary_worker = worker_list[worker_index]
             segment_data = array.get_segment_data(segment.start_index, segment.end_index)
             
+            # Send to primary worker
             msg_data = {
                 "arrayId": array.array_id,
                 "segmentId": segment.start_index,
                 "startIndex": segment.start_index,
                 "endIndex": segment.end_index,
                 "dataType": "int",
-                "data": segment_data.tolist()
+                "data": segment_data.tolist(),
+                "isPrimary": True
             }
             
             distribute_msg = Message(
                 MessageType.DISTRIBUTE_ARRAY,
                 "master",
-                worker.worker_id,
+                primary_worker.worker_id,
                 msg_data
             )
             
-            worker.socket.send(distribute_msg.to_json().encode() + b'\n')
-            segment.worker_id = worker.worker_id
+            primary_worker.socket.send(distribute_msg.to_json().encode() + b'\n')
+            segment.worker_id = primary_worker.worker_id
+            
+            # Track primary assignment
+            if primary_worker.worker_id not in self.worker_segments:
+                self.worker_segments[primary_worker.worker_id] = set()
+            self.worker_segments[primary_worker.worker_id].add(segment.start_index)
+            
+            # Send replicas
+            replicas = []
+            for i in range(1, self.REPLICATION_FACTOR):
+                if len(worker_list) > 1:
+                    replica_index = (worker_index + i) % len(worker_list)
+                    replica_worker = worker_list[replica_index]
+                    
+                    # Don't replicate to the same worker
+                    if replica_worker.worker_id != primary_worker.worker_id:
+                        msg_data["isPrimary"] = False
+                        replicate_msg = Message(
+                            MessageType.REPLICATE_DATA,
+                            "master",
+                            replica_worker.worker_id,
+                            msg_data
+                        )
+                        replica_worker.socket.send(replicate_msg.to_json().encode() + b'\n')
+                        
+                        replicas.append(replica_worker.worker_id)
+                        segment.replicas.append(replica_worker.worker_id)
+                        self.logger.info(f"Replicated segment {segment.start_index} to {replica_worker.worker_id}")
+            
+            self.segment_replicas[array.array_id][segment.start_index] = replicas
             worker_index += 1
     
     def distribute_double_array(self, array: DArrayDouble):
         worker_list = list(self.workers.values())
+        if not worker_list:
+            self.logger.error("No workers available for distribution")
+            return
+        
         worker_index = 0
+        self.segment_replicas[array.array_id] = {}
         
         for segment in array.segments:
             if worker_index >= len(worker_list):
                 worker_index = 0
             
-            worker = worker_list[worker_index]
+            primary_worker = worker_list[worker_index]
             segment_data = array.get_segment_data(segment.start_index, segment.end_index)
             
+            # Send to primary worker
             msg_data = {
                 "arrayId": array.array_id,
                 "segmentId": segment.start_index,
                 "startIndex": segment.start_index,
                 "endIndex": segment.end_index,
                 "dataType": "double",
-                "data": segment_data.tolist()
+                "data": segment_data.tolist(),
+                "isPrimary": True
             }
             
             distribute_msg = Message(
                 MessageType.DISTRIBUTE_ARRAY,
                 "master",
-                worker.worker_id,
+                primary_worker.worker_id,
                 msg_data
             )
             
-            worker.socket.send(distribute_msg.to_json().encode() + b'\n')
-            segment.worker_id = worker.worker_id
+            primary_worker.socket.send(distribute_msg.to_json().encode() + b'\n')
+            segment.worker_id = primary_worker.worker_id
+            
+            # Track primary assignment
+            if primary_worker.worker_id not in self.worker_segments:
+                self.worker_segments[primary_worker.worker_id] = set()
+            self.worker_segments[primary_worker.worker_id].add(segment.start_index)
+            
+            # Send replicas
+            replicas = []
+            for i in range(1, self.REPLICATION_FACTOR):
+                if len(worker_list) > 1:
+                    replica_index = (worker_index + i) % len(worker_list)
+                    replica_worker = worker_list[replica_index]
+                    
+                    # Don't replicate to the same worker
+                    if replica_worker.worker_id != primary_worker.worker_id:
+                        msg_data["isPrimary"] = False
+                        replicate_msg = Message(
+                            MessageType.REPLICATE_DATA,
+                            "master",
+                            replica_worker.worker_id,
+                            msg_data
+                        )
+                        replica_worker.socket.send(replicate_msg.to_json().encode() + b'\n')
+                        
+                        replicas.append(replica_worker.worker_id)
+                        segment.replicas.append(replica_worker.worker_id)
+                        self.logger.info(f"Replicated segment {segment.start_index} to {replica_worker.worker_id}")
+            
+            self.segment_replicas[array.array_id][segment.start_index] = replicas
             worker_index += 1
     
     def handle_apply_operation(self, message: Message, client_socket: socket.socket):
@@ -275,7 +353,173 @@ class MasterNode:
     
     def handle_worker_failure(self, worker_id: str):
         self.logger.error(f"Handling failure of worker: {worker_id}")
-        # TODO: Implement recovery mechanism
+        
+        # Get segments owned by failed worker
+        failed_segments = self.worker_segments.get(worker_id, set())
+        if not failed_segments:
+            self.logger.info(f"No segments to recover from worker {worker_id}")
+            return
+        
+        # Recover each segment
+        for array_id, array_replicas in self.segment_replicas.items():
+            # Check if this array has segments on the failed worker
+            int_array = self.int_arrays.get(array_id)
+            double_array = self.double_arrays.get(array_id)
+            
+            if int_array:
+                self._recover_int_array_segments(int_array, worker_id, failed_segments, array_replicas)
+            elif double_array:
+                self._recover_double_array_segments(double_array, worker_id, failed_segments, array_replicas)
+        
+        # Remove failed worker from tracking
+        if worker_id in self.worker_segments:
+            del self.worker_segments[worker_id]
+        if worker_id in self.workers:
+            del self.workers[worker_id]
+    
+    def _recover_int_array_segments(self, array: DArrayInt, failed_worker_id: str, 
+                                   failed_segments: set, replicas: Dict[int, List[str]]):
+        for segment in array.segments:
+            if segment.worker_id == failed_worker_id:
+                segment_replicas = replicas.get(segment.start_index, [])
+                if segment_replicas:
+                    # Find first alive replica
+                    for replica_id in segment_replicas:
+                        replica_worker = self.workers.get(replica_id)
+                        if replica_worker and replica_worker.alive:
+                            # Promote replica to primary
+                            promote_data = {
+                                "arrayId": array.array_id,
+                                "segmentId": segment.start_index,
+                                "makePrimary": True
+                            }
+                            
+                            promote_msg = Message(
+                                MessageType.RECOVER_DATA,
+                                "master",
+                                replica_id,
+                                promote_data
+                            )
+                            replica_worker.socket.send(promote_msg.to_json().encode() + b'\n')
+                            
+                            # Update segment assignment
+                            segment.worker_id = replica_id
+                            segment.replicas.remove(replica_id)
+                            if replica_id not in self.worker_segments:
+                                self.worker_segments[replica_id] = set()
+                            self.worker_segments[replica_id].add(segment.start_index)
+                            
+                            self.logger.info(f"Promoted replica {replica_id} for segment "
+                                           f"{segment.start_index} of array {array.array_id}")
+                            
+                            # Create new replica for resilience
+                            self._create_new_replica_int(array, segment)
+                            break
+    
+    def _recover_double_array_segments(self, array: DArrayDouble, failed_worker_id: str,
+                                     failed_segments: set, replicas: Dict[int, List[str]]):
+        for segment in array.segments:
+            if segment.worker_id == failed_worker_id:
+                segment_replicas = replicas.get(segment.start_index, [])
+                if segment_replicas:
+                    # Find first alive replica
+                    for replica_id in segment_replicas:
+                        replica_worker = self.workers.get(replica_id)
+                        if replica_worker and replica_worker.alive:
+                            # Promote replica to primary
+                            promote_data = {
+                                "arrayId": array.array_id,
+                                "segmentId": segment.start_index,
+                                "makePrimary": True
+                            }
+                            
+                            promote_msg = Message(
+                                MessageType.RECOVER_DATA,
+                                "master",
+                                replica_id,
+                                promote_data
+                            )
+                            replica_worker.socket.send(promote_msg.to_json().encode() + b'\n')
+                            
+                            # Update segment assignment
+                            segment.worker_id = replica_id
+                            segment.replicas.remove(replica_id)
+                            if replica_id not in self.worker_segments:
+                                self.worker_segments[replica_id] = set()
+                            self.worker_segments[replica_id].add(segment.start_index)
+                            
+                            self.logger.info(f"Promoted replica {replica_id} for segment "
+                                           f"{segment.start_index} of array {array.array_id}")
+                            
+                            # Create new replica for resilience
+                            self._create_new_replica_double(array, segment)
+                            break
+    
+    def _create_new_replica_int(self, array: DArrayInt, segment):
+        available_workers = [w for w in self.workers.values() 
+                           if w.alive and w.worker_id != segment.worker_id 
+                           and w.worker_id not in segment.replicas]
+        
+        if available_workers:
+            new_replica = available_workers[0]
+            segment_data = array.get_segment_data(segment.start_index, segment.end_index)
+            
+            msg_data = {
+                "arrayId": array.array_id,
+                "segmentId": segment.start_index,
+                "startIndex": segment.start_index,
+                "endIndex": segment.end_index,
+                "dataType": "int",
+                "data": segment_data.tolist(),
+                "isPrimary": False
+            }
+            
+            replicate_msg = Message(
+                MessageType.REPLICATE_DATA,
+                "master",
+                new_replica.worker_id,
+                msg_data
+            )
+            new_replica.socket.send(replicate_msg.to_json().encode() + b'\n')
+            
+            segment.replicas.append(new_replica.worker_id)
+            self.segment_replicas[array.array_id][segment.start_index].append(new_replica.worker_id)
+            
+            self.logger.info(f"Created new replica on {new_replica.worker_id} "
+                           f"for segment {segment.start_index}")
+    
+    def _create_new_replica_double(self, array: DArrayDouble, segment):
+        available_workers = [w for w in self.workers.values() 
+                           if w.alive and w.worker_id != segment.worker_id 
+                           and w.worker_id not in segment.replicas]
+        
+        if available_workers:
+            new_replica = available_workers[0]
+            segment_data = array.get_segment_data(segment.start_index, segment.end_index)
+            
+            msg_data = {
+                "arrayId": array.array_id,
+                "segmentId": segment.start_index,
+                "startIndex": segment.start_index,
+                "endIndex": segment.end_index,
+                "dataType": "double",
+                "data": segment_data.tolist(),
+                "isPrimary": False
+            }
+            
+            replicate_msg = Message(
+                MessageType.REPLICATE_DATA,
+                "master",
+                new_replica.worker_id,
+                msg_data
+            )
+            new_replica.socket.send(replicate_msg.to_json().encode() + b'\n')
+            
+            segment.replicas.append(new_replica.worker_id)
+            self.segment_replicas[array.array_id][segment.start_index].append(new_replica.worker_id)
+            
+            self.logger.info(f"Created new replica on {new_replica.worker_id} "
+                           f"for segment {segment.start_index}")
     
     def shutdown(self):
         self.running = False

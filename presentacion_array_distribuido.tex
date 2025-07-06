@@ -22,7 +22,9 @@
     client/.style={draw, rectangle, fill=orange!20, minimum width=2.5cm, minimum height=1.2cm, text centered, rounded corners},
     arrow/.style={->, >=stealth, thick},
     data/.style={draw, rectangle, fill=yellow!10, minimum width=2cm, minimum height=0.8cm, text centered},
-    socket/.style={<->, >=stealth, thick, red}
+    socket/.style={<->, >=stealth, thick, red},
+    replica/.style={draw, rectangle, fill=yellow!5, minimum width=2cm, minimum height=0.8cm, text centered, dashed},
+    timeline/.style={draw, thick, gray}
 }
 
 % Terminal style listing
@@ -45,7 +47,7 @@
 
 \usefonttheme[onlymath]{serif}
 
-\titlebackground*{assets/background}
+% \titlebackground*{assets/background}
 
 \newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
 
@@ -67,6 +69,7 @@
     \item Implementación
     \item Protocolo de Comunicación
     \item Ejemplos de Operaciones
+    \item Replicación y Recuperación
     \item Tolerancia a Fallos
     \item Demostración
     \item Conclusiones
@@ -243,12 +246,12 @@
 \begin{block}{Formato JSON}
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 {
-  "type": "MESSAGE_TYPE",
-  "from": "NODE_ID",
-  "to": "NODE_ID", 
-  "timestamp": 1234567890,
-  "data": {},
-  "status": "OK"
+  type: MESSAGE_TYPE,
+  from: NODE_ID,
+  to: NODE_ID, 
+  timestamp: 1234567890,
+  data: {},
+  status: OK
 }
 \end{lstlisting}
 \end{block}
@@ -263,7 +266,8 @@
         \item<3-> \texttt{DISTRIBUTE\_ARRAY} - Distribución de segmentos
         \item<4-> \texttt{PROCESS\_SEGMENT} - Orden de procesamiento
         \item<5-> \texttt{HEARTBEAT} - Verificación de salud
-        \item<6-> \texttt{SEGMENT\_RESULT} - Resultado procesado
+        \item<6-> \texttt{REPLICATE\_DATA} - Replicación de segmento
+        \item<7-> \texttt{RECOVER\_DATA} - Recuperación de fallo
     \end{itemize}
 \end{block}
 }
@@ -381,6 +385,189 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
 }
 \end{frame}
 
+% Replicación y Recuperación
+\begin{frame}
+\frametitle{Replicación de Datos}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+    % Master
+    \node[master] (master) at (0,3.5) {Nodo Maestro};
+    
+    % Workers
+    \node[worker] (w1) at (-4,1) {Worker 0};
+    \node[worker] (w2) at (0,1) {Worker 1};
+    \node[worker] (w3) at (4,1) {Worker 2};
+    
+    % Array segments
+    \visible<2->{
+    \node[data, fill=green!30] (s0) at (-4,-0.5) {Seg 0};
+    \node[data, fill=blue!30] (s1) at (0,-0.5) {Seg 1};
+    \node[data, fill=orange!30] (s2) at (4,-0.5) {Seg 2};
+    }
+    
+    % Primary assignments
+    \visible<3->{
+    \draw[arrow, thick] (master) -- (w1) node[midway, left] {\tiny Primary};
+    \draw[arrow, thick] (master) -- (w2) node[midway] {\tiny Primary};
+    \draw[arrow, thick] (master) -- (w3) node[midway, right] {\tiny Primary};
+    }
+    
+    % Replicas
+    \visible<4->{
+    % Replica of Seg 0 on Worker 1
+    \node[replica, fill=green!10] (s0r) at (-0.5,-1.5) {Seg 0'};
+    \draw[arrow, green] (s0) -- (s0r);
+    
+    % Replica of Seg 1 on Worker 2
+    \node[replica, fill=blue!10] (s1r) at (3.5,-1.5) {Seg 1'};
+    \draw[arrow, blue] (s1) -- (s1r);
+    
+    % Replica of Seg 2 on Worker 0
+    \node[replica, fill=orange!10] (s2r) at (-3.5,-1.5) {Seg 2'};
+    \draw[arrow, orange] (s2) -- (s2r);
+    }
+    
+    \visible<5->{
+    \node[below=3.5cm of master, text width=8cm] {\small Factor de replicación = 2 (primario + 1 réplica)};
+    }
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+% Mecanismo de Recuperación
+\begin{frame}
+\frametitle{Mecanismo de Recuperación}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{block}{Detección de Fallos}
+    \begin{enumerate}
+        \item<1-> Heartbeat timeout (10s)
+        \item<2-> Worker marcado como caído
+        \item<3-> Activar proceso de recuperación
+    \end{enumerate}
+\end{block}
+
+\visible<4->{
+\begin{block}{Promoción de Réplicas}
+    \begin{enumerate}
+        \item Identificar segmentos afectados
+        \item Promover réplicas a primarias
+        \item Actualizar mapeos de segmentos
+    \end{enumerate}
+\end{block}
+}
+
+\column{0.5\textwidth}
+\visible<5->{
+\begin{block}{Creación de Nuevas Réplicas}
+    \begin{enumerate}
+        \item Seleccionar workers disponibles
+        \item Replicar datos desde primario
+        \item Mantener factor de replicación
+    \end{enumerate}
+\end{block}
+}
+
+\visible<6->{
+\begin{block}{Redistribución}
+    \begin{enumerate}
+        \item Balancear carga entre workers
+        \item Evitar sobrecarga de nodos
+        \item Optimizar uso de recursos
+    \end{enumerate}
+\end{block}
+}
+\end{columns}
+\end{frame}
+
+% Ejemplo 3 - Simulación de Fallos
+\begin{frame}
+\frametitle{Ejemplo 3: Recuperación ante Fallos}
+\begin{center}
+\begin{tikzpicture}[scale=0.65]
+    % Timeline
+    \draw[arrow] (0,0) -- (10,0) node[right] {Tiempo};
+    
+    % States
+    \visible<1->{
+    \node[above] at (1,0.2) {Estado Inicial};
+    \node[worker, scale=0.6] at (1,1) {W0};
+    \node[worker, scale=0.6] at (1,1.8) {W1};
+    \node[worker, scale=0.6] at (1,2.6) {W2};
+    }
+    
+    \visible<2->{
+    \draw[timeline] (3,-0.5) -- (3,3.5);
+    \node[above] at (3,0.2) {Fallo W1};
+    \node[worker, scale=0.6, fill=red!40] at (3,1.8) {W1};
+    }
+    
+    \visible<3->{
+    \draw[timeline] (5,-0.5) -- (5,3.5);
+    \node[above] at (5,0.2) {Detección};
+    \node[draw, fill=orange!20, rounded corners, scale=0.6] at (5,3) {Timeout 10s};
+    }
+    
+    \visible<4->{
+    \draw[timeline] (7,-0.5) -- (7,3.5);
+    \node[above] at (7,0.2) {Recuperación};
+    \draw[arrow, green] (7,2.4) -- (7,1.2) node[midway, right] {\tiny Promover};
+    }
+    
+    \visible<5->{
+    \draw[timeline] (9,-0.5) -- (9,3.5);
+    \node[above] at (9,0.2) {Estado Final};
+    \node[worker, scale=0.6, fill=green!40] at (9,1) {W0+};
+    \node[worker, scale=0.6, fill=green!40] at (9,2.6) {W2+};
+    }
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+\visible<6->{
+\begin{block}{Proceso Automático}
+    \begin{itemize}
+        \item Sin pérdida de datos
+        \item Continuidad del servicio
+        \item Transparente para el cliente
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Terminal output for recovery demo
+\begin{frame}[fragile]
+\frametitle{Demostración - Recuperación Automática}
+\begin{lstlisting}[style=terminal]
+$ ./test-recovery.sh
+=== Distributed Array Recovery Test ===
+Starting Master node on port 5000
+Starting Worker-1
+Starting Worker-2
+Starting Worker-3
+
+=== Creating distributed array ===
+Create array response: {status:created,arrayId:myArray}
+INFO: Replicated segment 0 to worker-2
+INFO: Replicated segment 100 to worker-3
+INFO: Replicated segment 200 to worker-1
+
+=== Simulating Worker-2 failure ===
+Worker-2 has been terminated!
+WARNING: Worker worker-2 failed health check
+ERROR: Handling failure of worker: worker-2
+
+=== Recovery in progress ===
+INFO: Promoted replica worker-1 for segment 0 of array myArray
+INFO: Created new replica on worker-3 for segment 0
+INFO: Recovery completed successfully
+
+=== Testing array operations after recovery ===
+Apply operation response: {status:processing}
+Operations completed successfully after recovery!
+\end{lstlisting}
+\end{frame}
+
 % Tolerancia a Fallos
 \begin{frame}
 \frametitle{Tolerancia a Fallos}
@@ -410,7 +597,7 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
     % Worker failure
     \visible<3->{
     \node[worker, fill=red!40, draw=red] (w2fail) at (0,0) {Worker 1};
-    \node[below=0.5cm of w2fail, red] {\small ✗ Sin respuesta};
+    \node[below=0.5cm of w2fail, red] {\small $\times$ Sin respuesta};
     }
     
     % Detection
@@ -428,12 +615,13 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
 \end{center}
 
 \visible<6->{
-\begin{block}{Mecanismo de Heartbeat}
+\begin{block}{Sistema de Tolerancia a Fallos}
     \begin{itemize}
-        \item Intervalo de verificación: 3 segundos
-        \item Timeout de fallo: 10 segundos
-        \item Acción: Redistribuir trabajo a nodos activos
-        \item Estado: Marcar worker como inactivo
+        \item Heartbeat: verificación cada 3 segundos
+        \item Detección: timeout de 10 segundos
+        \item Replicación: factor 2 (primario + réplica)
+        \item Recuperación: promoción automática de réplicas
+        \item Redistribución: creación de nuevas réplicas
     \end{itemize}
 \end{block}
 }
@@ -474,15 +662,16 @@ Master node running on port 5000
 \end{block}
 
 \visible<6->{
-\begin{lstlisting}[style=terminal]
-$ npm start -- localhost 5000
-Connected to master at localhost:5000
-Enter commands (type "help" for usage, "exit" to quit):
-> create-double ts-array 5000
-Create array response: {"status":"created"}
-> apply ts-array example1
-Apply operation response: {"status":"processing"}
-\end{lstlisting}
+\begin{block}{Ejemplo de uso}
+\footnotesize
+\texttt{\$ npm start -- localhost 5000}\\
+\texttt{Connected to master at localhost:5000}\\
+\texttt{Enter commands (type help for usage, exit to quit):}\\
+\texttt{> create-double ts-array 5000}\\
+\texttt{Create array response: \{status:created\}}\\
+\texttt{> apply ts-array example1}\\
+\texttt{Apply operation response: \{status:processing\}}
+\end{block}
 }
 \end{frame}
 
@@ -490,27 +679,27 @@ Apply operation response: {"status":"processing"}
 \begin{frame}[fragile]
 \frametitle{Demostración - Cliente Interactivo}
 \begin{lstlisting}[style=terminal]
-$ java -cp "out:lib/*" client.DistributedArrayClient localhost 5000
+$ java -cp out:lib/* client.DistributedArrayClient localhost 5000
 Connected to master at localhost:5000
-Enter commands (type 'help' for usage, 'exit' to quit):
+Enter commands (type help for usage, exit to quit):
 > create-double math-array 10000
-Create array response: {"type":"OPERATION_COMPLETE",
-  "data":{"arrayId":"math-array","status":"created"}}
+Create array response: {type:OPERATION_COMPLETE,
+  data:{arrayId:math-array,status:created}}
 
 > apply math-array example1
-Apply operation response: {"type":"OPERATION_COMPLETE",
-  "data":{"status":"processing"}}
+Apply operation response: {type:OPERATION_COMPLETE,
+  data:{status:processing}}
 
 > get math-array
-Get result response: {"type":"OPERATION_COMPLETE",
-  "data":{"status":"complete","result":"Operation completed"}}
+Get result response: {type:OPERATION_COMPLETE,
+  data:{status:complete,result:Operation completed}}
 \end{lstlisting}
 \end{frame}
 
 % Logs del Sistema
 \begin{frame}[fragile]
 \frametitle{Logs del Sistema}
-\begin{lstlisting}[style=terminal, basicstyle=\tiny\ttfamily\color{terminalwhite}]
+\begin{lstlisting}[style=terminal]
 master.log
 INFO: Master node started on port 5000
 INFO: Worker registered: worker-0 from 127.0.0.1
@@ -589,7 +778,7 @@ INFO: Sent result to master
         \item<1-> Librería funcional en Java, Python y TypeScript
         \item<2-> Procesamiento verdaderamente distribuido
         \item<3-> Paralelización efectiva por nodo
-        \item<4-> Tolerancia a fallos básica implementada
+        \item<4-> Sistema completo de replicación y recuperación
         \item<5-> Sin dependencias de frameworks externos
         \item<6-> Interoperabilidad entre lenguajes
     \end{itemize}
@@ -606,11 +795,12 @@ INFO: Sent result to master
 }
 
 \visible<7->{
-\begin{block}{Mejoras Futuras}
+\begin{block}{Características Avanzadas Implementadas}
     \begin{itemize}
-        \item Replicación activa completa
-        \item Recuperación automática con réplicas
-        \item Balanceo dinámico de carga
+        \item Replicación automática de segmentos
+        \item Recuperación transparente ante fallos
+        \item Mantenimiento del factor de replicación
+        \item Redistribución dinámica de datos
     \end{itemize}
 \end{block}
 }

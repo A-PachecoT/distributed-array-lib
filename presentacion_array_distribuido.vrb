@@ -1,22 +1,18 @@
-\frametitle{Cliente TypeScript}
-\begin{block}{Características}
-    \begin{itemize}
-        \item<1-> Cliente completo en TypeScript/Node.js
-        \item<2-> Compatible con clusters Java y Python
-        \item<3-> Interfaz CLI idéntica
-        \item<4-> Comunicación asíncrona con Promises
-        \item<5-> Tipado fuerte con interfaces
-    \end{itemize}
-\end{block}
-
-\visible<6->{
+\frametitle{Logs del Sistema}
 \begin{lstlisting}[style=terminal]
-$ npm start -- localhost 5000
-Connected to master at localhost:5000
-Enter commands (type "help" for usage, "exit" to quit):
-> create-double ts-array 5000
-Create array response: {"status":"created"}
-> apply ts-array example1
-Apply operation response: {"status":"processing"}
+master.log
+INFO: Master node started on port 5000
+INFO: Worker registered: worker-0 from 127.0.0.1
+INFO: Worker registered: worker-1 from 127.0.0.1
+INFO: Worker registered: worker-2 from 127.0.0.1
+INFO: Received array creation request: math-array (10000 elements)
+INFO: Array segmented: 3 segments distributed
+INFO: Processing operation: example1 on math-array
+
+worker-0.log
+INFO: Registered with master node
+INFO: Received double array segment: math-array with 3333 elements
+INFO: Processing Example 1 using 4 threads
+INFO: Completed Example 1 processing for math-array
+INFO: Sent result to master
 \end{lstlisting}
-}

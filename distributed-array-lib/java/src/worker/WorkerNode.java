@@ -19,6 +19,12 @@ public class WorkerNode {
     private PrintWriter writer;
     private final Map<String, int[]> intSegments = new ConcurrentHashMap<>();
     private final Map<String, double[]> doubleSegments = new ConcurrentHashMap<>();
+    
+    // Separate storage for replicas
+    private final Map<String, int[]> intReplicas = new ConcurrentHashMap<>();
+    private final Map<String, double[]> doubleReplicas = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> isPrimary = new ConcurrentHashMap<>();
+    
     private final ExecutorService threadPool;
     private final ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1);
     private final Gson gson = new Gson();
@@ -94,6 +100,12 @@ public class WorkerNode {
             case MessageType.DISTRIBUTE_ARRAY:
                 handleDistributeArray(message);
                 break;
+            case MessageType.REPLICATE_DATA:
+                handleReplicateData(message);
+                break;
+            case MessageType.RECOVER_DATA:
+                handleRecoverData(message);
+                break;
             case MessageType.PROCESS_SEGMENT:
                 handleProcessSegment(message);
                 break;
@@ -107,17 +119,72 @@ public class WorkerNode {
         Map<String, Object> data = message.getData();
         String arrayId = (String) data.get("arrayId");
         String dataType = (String) data.get("dataType");
+        Boolean primary = (Boolean) data.get("isPrimary");
+        if (primary == null) primary = true; // Default to primary for backwards compatibility
+        
+        String segmentKey = arrayId + "_" + data.get("segmentId");
+        isPrimary.put(segmentKey, primary);
         
         if (dataType.equals("int")) {
             List<Double> values = (List<Double>) data.get("data");
             int[] segment = values.stream().mapToInt(Double::intValue).toArray();
-            intSegments.put(arrayId, segment);
-            logger.info("Received int array segment: " + arrayId + " with " + segment.length + " elements");
+            if (primary) {
+                intSegments.put(arrayId, segment);
+                logger.info("Received PRIMARY int array segment: " + arrayId + " with " + segment.length + " elements");
+            } else {
+                intReplicas.put(segmentKey, segment);
+                logger.info("Received REPLICA int array segment: " + segmentKey + " with " + segment.length + " elements");
+            }
         } else if (dataType.equals("double")) {
             List<Double> values = (List<Double>) data.get("data");
             double[] segment = values.stream().mapToDouble(Double::doubleValue).toArray();
-            doubleSegments.put(arrayId, segment);
-            logger.info("Received double array segment: " + arrayId + " with " + segment.length + " elements");
+            if (primary) {
+                doubleSegments.put(arrayId, segment);
+                logger.info("Received PRIMARY double array segment: " + arrayId + " with " + segment.length + " elements");
+            } else {
+                doubleReplicas.put(segmentKey, segment);
+                logger.info("Received REPLICA double array segment: " + segmentKey + " with " + segment.length + " elements");
+            }
+        }
+    }
+    
+    private void handleReplicateData(Message message) {
+        // Same logic as distribute but always stored as replica
+        Map<String, Object> data = message.getData();
+        data.put("isPrimary", false);
+        handleDistributeArray(message);
+    }
+    
+    private void handleRecoverData(Message message) {
+        Map<String, Object> data = message.getData();
+        String arrayId = (String) data.get("arrayId");
+        Integer segmentId = ((Double) data.get("segmentId")).intValue();
+        Boolean makePrimary = (Boolean) data.get("makePrimary");
+        
+        String segmentKey = arrayId + "_" + segmentId;
+        
+        if (makePrimary != null && makePrimary) {
+            // Promote replica to primary
+            int[] intReplica = intReplicas.get(segmentKey);
+            double[] doubleReplica = doubleReplicas.get(segmentKey);
+            
+            if (intReplica != null) {
+                intSegments.put(arrayId, intReplica);
+                isPrimary.put(segmentKey, true);
+                logger.info("Promoted int replica to primary for " + segmentKey);
+            } else if (doubleReplica != null) {
+                doubleSegments.put(arrayId, doubleReplica);
+                isPrimary.put(segmentKey, true);
+                logger.info("Promoted double replica to primary for " + segmentKey);
+            }
+            
+            // Send recovery complete message
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("arrayId", arrayId);
+            responseData.put("segmentId", segmentId);
+            responseData.put("status", "recovered");
+            Message response = new Message(MessageType.RECOVERY_COMPLETE, workerId, "master", responseData);
+            writer.println(gson.toJson(response));
         }
     }
 

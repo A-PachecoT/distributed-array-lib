@@ -7,6 +7,7 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.*;
+import java.util.stream.Collectors;
 
 public class MasterNode {
     private static final Logger logger = Logger.getLogger(MasterNode.class.getName());
@@ -19,6 +20,11 @@ public class MasterNode {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final Gson gson = new Gson();
     private volatile boolean running = true;
+    
+    // Replication tracking
+    private final Map<String, Map<Integer, List<String>>> segmentReplicas = new ConcurrentHashMap<>();
+    private final Map<String, Set<Integer>> workerSegments = new ConcurrentHashMap<>();
+    private static final int REPLICATION_FACTOR = 2; // Primary + 1 replica
 
     class WorkerInfo {
         String workerId;
@@ -182,12 +188,19 @@ public class MasterNode {
 
     private void distributeArray(DArrayInt array) {
         List<WorkerInfo> workerList = new ArrayList<>(workers.values());
+        if (workerList.isEmpty()) {
+            logger.severe("No workers available for distribution");
+            return;
+        }
+        
         int workerIndex = 0;
+        segmentReplicas.put(array.getArrayId(), new HashMap<>());
         
         for (DArrayInt.Segment segment : array.getSegments()) {
             if (workerIndex >= workerList.size()) workerIndex = 0;
-            WorkerInfo worker = workerList.get(workerIndex);
+            WorkerInfo primaryWorker = workerList.get(workerIndex);
             
+            // Send to primary worker
             Map<String, Object> data = new HashMap<>();
             data.put("arrayId", array.getArrayId());
             data.put("segmentId", segment.startIndex);
@@ -195,23 +208,54 @@ public class MasterNode {
             data.put("endIndex", segment.endIndex);
             data.put("dataType", "int");
             data.put("data", array.getSegmentData(segment.startIndex, segment.endIndex));
+            data.put("isPrimary", true);
             
-            Message distributeMsg = new Message(MessageType.DISTRIBUTE_ARRAY, "master", worker.workerId, data);
-            worker.writer.println(gson.toJson(distributeMsg));
+            Message distributeMsg = new Message(MessageType.DISTRIBUTE_ARRAY, "master", primaryWorker.workerId, data);
+            primaryWorker.writer.println(gson.toJson(distributeMsg));
             
-            segment.workerId = worker.workerId;
+            segment.workerId = primaryWorker.workerId;
+            
+            // Track primary assignment
+            workerSegments.computeIfAbsent(primaryWorker.workerId, k -> new HashSet<>()).add(segment.startIndex);
+            
+            // Send replicas
+            List<String> replicas = new ArrayList<>();
+            for (int i = 1; i < REPLICATION_FACTOR && workerList.size() > 1; i++) {
+                int replicaIndex = (workerIndex + i) % workerList.size();
+                WorkerInfo replicaWorker = workerList.get(replicaIndex);
+                
+                // Don't replicate to the same worker
+                if (!replicaWorker.workerId.equals(primaryWorker.workerId)) {
+                    data.put("isPrimary", false);
+                    Message replicateMsg = new Message(MessageType.REPLICATE_DATA, "master", replicaWorker.workerId, data);
+                    replicaWorker.writer.println(gson.toJson(replicateMsg));
+                    
+                    replicas.add(replicaWorker.workerId);
+                    segment.replicas.add(replicaWorker.workerId);
+                    logger.info("Replicated segment " + segment.startIndex + " to " + replicaWorker.workerId);
+                }
+            }
+            
+            segmentReplicas.get(array.getArrayId()).put(segment.startIndex, replicas);
             workerIndex++;
         }
     }
 
     private void distributeArray(DArrayDouble array) {
         List<WorkerInfo> workerList = new ArrayList<>(workers.values());
+        if (workerList.isEmpty()) {
+            logger.severe("No workers available for distribution");
+            return;
+        }
+        
         int workerIndex = 0;
+        segmentReplicas.put(array.getArrayId(), new HashMap<>());
         
         for (DArrayDouble.Segment segment : array.getSegments()) {
             if (workerIndex >= workerList.size()) workerIndex = 0;
-            WorkerInfo worker = workerList.get(workerIndex);
+            WorkerInfo primaryWorker = workerList.get(workerIndex);
             
+            // Send to primary worker
             Map<String, Object> data = new HashMap<>();
             data.put("arrayId", array.getArrayId());
             data.put("segmentId", segment.startIndex);
@@ -219,11 +263,35 @@ public class MasterNode {
             data.put("endIndex", segment.endIndex);
             data.put("dataType", "double");
             data.put("data", array.getSegmentData(segment.startIndex, segment.endIndex));
+            data.put("isPrimary", true);
             
-            Message distributeMsg = new Message(MessageType.DISTRIBUTE_ARRAY, "master", worker.workerId, data);
-            worker.writer.println(gson.toJson(distributeMsg));
+            Message distributeMsg = new Message(MessageType.DISTRIBUTE_ARRAY, "master", primaryWorker.workerId, data);
+            primaryWorker.writer.println(gson.toJson(distributeMsg));
             
-            segment.workerId = worker.workerId;
+            segment.workerId = primaryWorker.workerId;
+            
+            // Track primary assignment
+            workerSegments.computeIfAbsent(primaryWorker.workerId, k -> new HashSet<>()).add(segment.startIndex);
+            
+            // Send replicas
+            List<String> replicas = new ArrayList<>();
+            for (int i = 1; i < REPLICATION_FACTOR && workerList.size() > 1; i++) {
+                int replicaIndex = (workerIndex + i) % workerList.size();
+                WorkerInfo replicaWorker = workerList.get(replicaIndex);
+                
+                // Don't replicate to the same worker
+                if (!replicaWorker.workerId.equals(primaryWorker.workerId)) {
+                    data.put("isPrimary", false);
+                    Message replicateMsg = new Message(MessageType.REPLICATE_DATA, "master", replicaWorker.workerId, data);
+                    replicaWorker.writer.println(gson.toJson(replicateMsg));
+                    
+                    replicas.add(replicaWorker.workerId);
+                    segment.replicas.add(replicaWorker.workerId);
+                    logger.info("Replicated segment " + segment.startIndex + " to " + replicaWorker.workerId);
+                }
+            }
+            
+            segmentReplicas.get(array.getArrayId()).put(segment.startIndex, replicas);
             workerIndex++;
         }
     }
@@ -276,6 +344,170 @@ public class MasterNode {
 
     private void handleWorkerFailure(String workerId) {
         logger.severe("Handling failure of worker: " + workerId);
+        
+        // Get segments owned by failed worker
+        Set<Integer> failedSegments = workerSegments.get(workerId);
+        if (failedSegments == null || failedSegments.isEmpty()) {
+            logger.info("No segments to recover from worker " + workerId);
+            return;
+        }
+        
+        // Recover each segment
+        for (String arrayId : segmentReplicas.keySet()) {
+            Map<Integer, List<String>> arrayReplicas = segmentReplicas.get(arrayId);
+            
+            // Check if this array has segments on the failed worker
+            DArrayInt intArray = intArrays.get(arrayId);
+            DArrayDouble doubleArray = doubleArrays.get(arrayId);
+            
+            if (intArray != null) {
+                recoverIntArraySegments(intArray, workerId, failedSegments, arrayReplicas);
+            } else if (doubleArray != null) {
+                recoverDoubleArraySegments(doubleArray, workerId, failedSegments, arrayReplicas);
+            }
+        }
+        
+        // Remove failed worker from tracking
+        workerSegments.remove(workerId);
+        workers.remove(workerId);
+    }
+    
+    private void recoverIntArraySegments(DArrayInt array, String failedWorkerId, 
+                                       Set<Integer> failedSegments, Map<Integer, List<String>> replicas) {
+        for (DArrayInt.Segment segment : array.getSegments()) {
+            if (segment.workerId.equals(failedWorkerId)) {
+                List<String> segmentReplicas = replicas.get(segment.startIndex);
+                if (segmentReplicas != null && !segmentReplicas.isEmpty()) {
+                    // Find first alive replica
+                    for (String replicaId : segmentReplicas) {
+                        WorkerInfo replica = workers.get(replicaId);
+                        if (replica != null && replica.alive) {
+                            // Promote replica to primary
+                            Map<String, Object> promoteData = new HashMap<>();
+                            promoteData.put("arrayId", array.getArrayId());
+                            promoteData.put("segmentId", segment.startIndex);
+                            promoteData.put("makePrimary", true);
+                            
+                            Message promoteMsg = new Message(MessageType.RECOVER_DATA, 
+                                "master", replicaId, promoteData);
+                            replica.writer.println(gson.toJson(promoteMsg));
+                            
+                            // Update segment assignment
+                            segment.workerId = replicaId;
+                            segment.replicas.remove(replicaId);
+                            workerSegments.computeIfAbsent(replicaId, k -> new HashSet<>())
+                                .add(segment.startIndex);
+                            
+                            logger.info("Promoted replica " + replicaId + " for segment " + 
+                                segment.startIndex + " of array " + array.getArrayId());
+                            
+                            // Create new replica for resilience
+                            createNewReplica(array, segment);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void recoverDoubleArraySegments(DArrayDouble array, String failedWorkerId, 
+                                          Set<Integer> failedSegments, Map<Integer, List<String>> replicas) {
+        for (DArrayDouble.Segment segment : array.getSegments()) {
+            if (segment.workerId.equals(failedWorkerId)) {
+                List<String> segmentReplicas = replicas.get(segment.startIndex);
+                if (segmentReplicas != null && !segmentReplicas.isEmpty()) {
+                    // Find first alive replica
+                    for (String replicaId : segmentReplicas) {
+                        WorkerInfo replica = workers.get(replicaId);
+                        if (replica != null && replica.alive) {
+                            // Promote replica to primary
+                            Map<String, Object> promoteData = new HashMap<>();
+                            promoteData.put("arrayId", array.getArrayId());
+                            promoteData.put("segmentId", segment.startIndex);
+                            promoteData.put("makePrimary", true);
+                            
+                            Message promoteMsg = new Message(MessageType.RECOVER_DATA, 
+                                "master", replicaId, promoteData);
+                            replica.writer.println(gson.toJson(promoteMsg));
+                            
+                            // Update segment assignment
+                            segment.workerId = replicaId;
+                            segment.replicas.remove(replicaId);
+                            workerSegments.computeIfAbsent(replicaId, k -> new HashSet<>())
+                                .add(segment.startIndex);
+                            
+                            logger.info("Promoted replica " + replicaId + " for segment " + 
+                                segment.startIndex + " of array " + array.getArrayId());
+                            
+                            // Create new replica for resilience
+                            createNewReplica(array, segment);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void createNewReplica(DArrayInt array, DArrayInt.Segment segment) {
+        List<WorkerInfo> availableWorkers = workers.values().stream()
+            .filter(w -> w.alive && !w.workerId.equals(segment.workerId) && 
+                        !segment.replicas.contains(w.workerId))
+            .collect(Collectors.toList());
+        
+        if (!availableWorkers.isEmpty()) {
+            WorkerInfo newReplica = availableWorkers.get(0);
+            
+            Map<String, Object> data = new HashMap<>();
+            data.put("arrayId", array.getArrayId());
+            data.put("segmentId", segment.startIndex);
+            data.put("startIndex", segment.startIndex);
+            data.put("endIndex", segment.endIndex);
+            data.put("dataType", "int");
+            data.put("data", array.getSegmentData(segment.startIndex, segment.endIndex));
+            data.put("isPrimary", false);
+            
+            Message replicateMsg = new Message(MessageType.REPLICATE_DATA, 
+                "master", newReplica.workerId, data);
+            newReplica.writer.println(gson.toJson(replicateMsg));
+            
+            segment.replicas.add(newReplica.workerId);
+            segmentReplicas.get(array.getArrayId()).get(segment.startIndex).add(newReplica.workerId);
+            
+            logger.info("Created new replica on " + newReplica.workerId + 
+                " for segment " + segment.startIndex);
+        }
+    }
+    
+    private void createNewReplica(DArrayDouble array, DArrayDouble.Segment segment) {
+        List<WorkerInfo> availableWorkers = workers.values().stream()
+            .filter(w -> w.alive && !w.workerId.equals(segment.workerId) && 
+                        !segment.replicas.contains(w.workerId))
+            .collect(Collectors.toList());
+        
+        if (!availableWorkers.isEmpty()) {
+            WorkerInfo newReplica = availableWorkers.get(0);
+            
+            Map<String, Object> data = new HashMap<>();
+            data.put("arrayId", array.getArrayId());
+            data.put("segmentId", segment.startIndex);
+            data.put("startIndex", segment.startIndex);
+            data.put("endIndex", segment.endIndex);
+            data.put("dataType", "double");
+            data.put("data", array.getSegmentData(segment.startIndex, segment.endIndex));
+            data.put("isPrimary", false);
+            
+            Message replicateMsg = new Message(MessageType.REPLICATE_DATA, 
+                "master", newReplica.workerId, data);
+            newReplica.writer.println(gson.toJson(replicateMsg));
+            
+            segment.replicas.add(newReplica.workerId);
+            segmentReplicas.get(array.getArrayId()).get(segment.startIndex).add(newReplica.workerId);
+            
+            logger.info("Created new replica on " + newReplica.workerId + 
+                " for segment " + segment.startIndex);
+        }
     }
 
     public void shutdown() {
