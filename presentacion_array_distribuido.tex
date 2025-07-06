@@ -52,7 +52,7 @@
 \title{Librería Distribuida para Arrays}
 \subtitle{Procesamiento Concurrente y Distribuido}
 \course{CC4P1 Programación Concurrente y Distribuida}
-\author{André Pacheco}
+\author{André Pacheco, Arbues Perez, Sergio Pezo}
 \date{Julio 2025}
 
 \begin{document}
@@ -62,14 +62,14 @@
 \begin{frame}
 \frametitle{Agenda}
 \begin{itemize}
-    \item<1-> Objetivo del Proyecto
-    \item<2-> Arquitectura y Diseño
-    \item<3-> Implementación
-    \item<4-> Protocolo de Comunicación
-    \item<5-> Ejemplos de Operaciones
-    \item<6-> Tolerancia a Fallos
-    \item<7-> Demostración
-    \item<8-> Conclusiones
+    \item Objetivo del Proyecto
+    \item Arquitectura y Diseño
+    \item Implementación
+    \item Protocolo de Comunicación
+    \item Ejemplos de Operaciones
+    \item Tolerancia a Fallos
+    \item Demostración
+    \item Conclusiones
 \end{itemize}
 \end{frame}
 
@@ -91,6 +91,7 @@
     \begin{itemize}
         \item Java 8+
         \item Python 3.6+
+        \item TypeScript (Cliente)
     \end{itemize}
 \end{block}
 }
@@ -100,42 +101,43 @@
 \begin{frame}
 \frametitle{Arquitectura del Sistema}
 \begin{center}
-\begin{tikzpicture}[scale=0.9, transform shape]
+\begin{tikzpicture}[scale=0.7, transform shape]
     % Master node
-    \node[master] (master) at (0,3) {Nodo Maestro};
+    \node[master] (master) at (0,2) {Nodo Maestro};
     
     % Worker nodes
     \visible<2->{
-    \node[worker] (w1) at (-3,0) {Worker 0};
-    \node[worker] (w2) at (0,0) {Worker 1};
-    \node[worker] (w3) at (3,0) {Worker 2};
+    \node[worker] (w1) at (-3,-0.5) {Worker 0};
+    \node[worker] (w2) at (0,-0.5) {Worker 1};
+    \node[worker] (w3) at (3,-0.5) {Worker 2};
     }
     
     % Client
     \visible<3->{
-    \node[client] (client) at (0,6) {Cliente};
+    \node[client] (client) at (0,3.8) {Cliente};
     }
     
     % Connections
     \visible<2->{
-    \draw[socket] (master) -- (w1) node[midway, left] {TCP};
-    \draw[socket] (master) -- (w2) node[midway, right] {TCP};
-    \draw[socket] (master) -- (w3) node[midway, right] {TCP};
+    \draw[socket] (master) -- (w1) node[midway, left] {\tiny TCP};
+    \draw[socket] (master) -- (w2) node[midway, right] {\tiny TCP};
+    \draw[socket] (master) -- (w3) node[midway, right] {\tiny TCP};
     }
     
     \visible<3->{
-    \draw[arrow, blue, thick] (client) -- (master);
+    \draw[arrow, blue, line width=1pt] (client) -- (master);
     }
     
     % Data distribution
     \visible<4->{
-    \node[data, below=0.3cm of w1] (d1) {Segmento 0};
-    \node[data, below=0.3cm of w2] (d2) {Segmento 1};
-    \node[data, below=0.3cm of w3] (d3) {Segmento 2};
+    \node[data, below=0.3cm of w1] (d1) {\tiny Segmento 0};
+    \node[data, below=0.3cm of w2] (d2) {\tiny Segmento 1};
+    \node[data, below=0.3cm of w3] (d3) {\tiny Segmento 2};
     }
 \end{tikzpicture}
 \end{center}
 
+\vspace{-0.5cm}
 \visible<5->{
 \begin{block}{Características}
     \begin{itemize}
@@ -164,13 +166,14 @@
 \end{block}
 
 \column{0.5\textwidth}
-\begin{block}{Python}
+\begin{block}{Python / TypeScript}
     \begin{itemize}
         \item<1-> \texttt{master\_node.py}
         \item<2-> \texttt{worker\_node.py}
         \item<3-> \texttt{darray.py}
         \item<4-> \texttt{message.py}
         \item<5-> \texttt{distributed\_array\_client.py}
+        \item<6-> \texttt{DistributedArrayClient.ts}
     \end{itemize}
 \end{block}
 \end{columns}
@@ -183,49 +186,50 @@
 \begin{tikzpicture}[scale=0.8]
     % Original array
     \visible<1->{
-    \draw[thick] (0,4) rectangle (8,5);
-    \node at (4,4.5) {Array Original (10,000 elementos)};
+    \draw[thick] (0,3.8) rectangle (8,4.8);
+    \node at (4,4.3) {Array Original (10,000 elementos)};
     }
     
     % Segmentation arrows
     \visible<2->{
-    \draw[arrow, red] (2,3.8) -- (2,3);
-    \draw[arrow, red] (4,3.8) -- (4,3);
-    \draw[arrow, red] (6,3.8) -- (6,3);
+    \draw[arrow, red] (2,3.6) -- (2,3.1);
+    \draw[arrow, red] (4,3.6) -- (4,3.1);
+    \draw[arrow, red] (6,3.6) -- (6,3.1);
     }
     
     % Segments
     \visible<3->{
-    \draw[fill=green!20] (0,2) rectangle (2.5,3);
-    \node at (1.25,2.5) {Seg 0};
-    \node at (1.25,1.7) {\small 3,333 elem};
+    \draw[fill=green!20] (0,2.1) rectangle (2.5,3.1);
+    \node at (1.25,2.6) {Seg 0};
+    \node at (1.25,1.85) {\small 3,333 elem};
     
-    \draw[fill=blue!20] (3,2) rectangle (5.5,3);
-    \node at (4.25,2.5) {Seg 1};
-    \node at (4.25,1.7) {\small 3,333 elem};
+    \draw[fill=blue!20] (3,2.1) rectangle (5.5,3.1);
+    \node at (4.25,2.6) {Seg 1};
+    \node at (4.25,1.85) {\small 3,333 elem};
     
-    \draw[fill=orange!20] (6,2) rectangle (8.5,3);
-    \node at (7.25,2.5) {Seg 2};
-    \node at (7.25,1.7) {\small 3,334 elem};
+    \draw[fill=orange!20] (6,2.1) rectangle (8.5,3.1);
+    \node at (7.25,2.6) {Seg 2};
+    \node at (7.25,1.85) {\small 3,334 elem};
     }
     
     % Workers
     \visible<4->{
-    \draw[arrow] (1.25,1.5) -- (1.25,0.5);
-    \draw[arrow] (4.25,1.5) -- (4.25,0.5);
-    \draw[arrow] (7.25,1.5) -- (7.25,0.5);
+    \draw[arrow] (1.25,1.65) -- (1.25,1);
+    \draw[arrow] (4.25,1.65) -- (4.25,1);
+    \draw[arrow] (7.25,1.65) -- (7.25,1);
     
-    \node[worker, scale=0.7] at (1.25,0) {Worker 0};
-    \node[worker, scale=0.7] at (4.25,0) {Worker 1};
-    \node[worker, scale=0.7] at (7.25,0) {Worker 2};
+    \node[worker, scale=0.7] at (1.25,0.5) {Worker 0};
+    \node[worker, scale=0.7] at (4.25,0.5) {Worker 1};
+    \node[worker, scale=0.7] at (7.25,0.5) {Worker 2};
     }
 \end{tikzpicture}
 \end{center}
 
+\vspace{-0.3cm}
 \visible<5->{
 \begin{block}{Algoritmo de Segmentación}
     \begin{itemize}
-        \item División equitativa: $\text{tamaño\_segmento} = \text{total} / \text{workers}$
+        \item División equitativa: $\frac{\text{total}}{\text{workers}}$
         \item Manejo de residuo distribuido
         \item Asignación round-robin
     \end{itemize}
@@ -237,20 +241,24 @@
 \begin{frame}[fragile]
 \frametitle{Protocolo de Comunicación}
 \begin{block}{Formato JSON}
-\begin{lstlisting}[basicstyle=\small\ttfamily]
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 {
   "type": "MESSAGE_TYPE",
   "from": "NODE_ID",
   "to": "NODE_ID", 
   "timestamp": 1234567890,
-  "data": {}
+  "data": {},
+  "status": "OK"
 }
 \end{lstlisting}
 \end{block}
 
+\vspace{-0.3cm}
 \visible<2->{
 \begin{block}{Tipos de Mensajes}
     \begin{itemize}
+        \small
+        \setlength\itemsep{-0.1em}
         \item<2-> \texttt{REGISTER\_WORKER} - Registro de trabajador
         \item<3-> \texttt{DISTRIBUTE\_ARRAY} - Distribución de segmentos
         \item<4-> \texttt{PROCESS\_SEGMENT} - Orden de procesamiento
@@ -267,14 +275,14 @@
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
     % Worker node
-    \node[worker, minimum width=4cm] (worker) at (0,4) {Worker Node};
+    \node[worker, minimum width=7cm] (worker) at (0,4) {Worker Node};
     
     % CPU cores
     \visible<2->{
-    \node[draw, circle, fill=yellow!30] (c1) at (-1.5,2) {Core 0};
-    \node[draw, circle, fill=yellow!30] (c2) at (-0.5,2) {Core 1};
-    \node[draw, circle, fill=yellow!30] (c3) at (0.5,2) {Core 2};
-    \node[draw, circle, fill=yellow!30] (c4) at (1.5,2) {Core 3};
+    \node[draw, circle, fill=yellow!30] (c1) at (-3,2) {Core 0};
+    \node[draw, circle, fill=yellow!30] (c2) at (-1,2) {Core 1};
+    \node[draw, circle, fill=yellow!30] (c3) at (1,2) {Core 2};
+    \node[draw, circle, fill=yellow!30] (c4) at (3,2) {Core 3};
     
     \draw[arrow] (worker) -- (c1);
     \draw[arrow] (worker) -- (c2);
@@ -284,7 +292,7 @@
     
     % Thread pool
     \visible<3->{
-    \node[draw, rectangle, fill=blue!10, minimum width=4cm] (pool) at (0,0.5) {ThreadPool};
+    \node[draw, rectangle, fill=blue!10, minimum width=7cm] (pool) at (0,0.5) {ThreadPool};
     \draw[arrow] (c1) -- (pool);
     \draw[arrow] (c2) -- (pool);
     \draw[arrow] (c3) -- (pool);
@@ -293,20 +301,24 @@
     
     % Data chunks
     \visible<4->{
-    \node[data, scale=0.7] at (-3,-1) {Chunk 0};
-    \node[data, scale=0.7] at (-1,-1) {Chunk 1};
-    \node[data, scale=0.7] at (1,-1) {Chunk 2};
-    \node[data, scale=0.7] at (3,-1) {Chunk 3};
+    \node[data, scale=0.7] at (-3,-0.5) {Chunk 0};
+    \node[data, scale=0.7] at (-1,-0.5) {Chunk 1};
+    \node[data, scale=0.7] at (1,-0.5) {Chunk 2};
+    \node[data, scale=0.7] at (3,-0.5) {Chunk 3};
     }
 \end{tikzpicture}
 \end{center}
 
+\vspace{-0.3cm}
 \visible<5->{
 \begin{block}{Estrategia}
     \begin{itemize}
+        \small
+        \setlength\itemsep{-0.1em}
         \item Detección automática de núcleos: \texttt{Runtime.availableProcessors()}
         \item División del segmento en chunks
         \item Procesamiento concurrente con ThreadPool
+        \item Sincronización mediante \texttt{Future<T>}
     \end{itemize}
 \end{block}
 }
@@ -373,54 +385,55 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
 \begin{frame}
 \frametitle{Tolerancia a Fallos}
 \begin{center}
-\begin{tikzpicture}[scale=0.8]
-    % Timeline
-    \draw[thick, ->] (0,0) -- (8,0) node[right] {Tiempo};
+\begin{tikzpicture}[scale=0.75]
+    % Master node
+    \node[master] (master) at (0,3) {Nodo Maestro};
     
-    % Master
-    \node[master, scale=0.7] at (0,2) {Master};
+    % Workers
+    \visible<1->{
+    \node[worker] (w1) at (-3.6,0) {Worker 0};
+    \node[worker] (w2) at (0,0) {Worker 1};
+    \node[worker] (w3) at (3.6,0) {Worker 2};
     
-    % Worker healthy
-    \visible<1-3>{
-    \node[worker, scale=0.7] at (2,2) {Worker};
-    \draw[<->, green, thick] (0.8,2) -- (1.2,2);
+    % Connections
+    \draw[socket] (master) -- (w1);
+    \draw[socket] (master) -- (w2);
+    \draw[socket] (master) -- (w3);
     }
     
-    % Heartbeats
+    % Heartbeat signals
     \visible<2->{
-    \foreach \x in {2,3,4} {
-        \draw[arrow, blue] (\x,1.5) -- (\x,2.5);
-        \node[scale=0.6] at (\x,1.3) {HB};
-    }
+    \draw[arrow, blue, thick, <->] (master.south) -- (w2.north) node[midway, right] {\small Heartbeat};
+    \node[below=0.3cm of w2] {\tiny cada 3s};
     }
     
-    % Worker fails
-    \visible<4->{
-    \node[worker, scale=0.7, fill=red!30] at (5,2) {Worker};
-    \draw[->, red, thick] (4.5,2) -- (5.5,2);
-    \node[scale=0.6] at (5,1.3) {Timeout};
+    % Worker failure
+    \visible<3->{
+    \node[worker, fill=red!40, draw=red] (w2fail) at (0,0) {Worker 1};
+    \node[below=0.5cm of w2fail, red] {\small ✗ Sin respuesta};
     }
     
     % Detection
-    \visible<5->{
-    \node[draw, rectangle, fill=yellow!20] at (6,3) {Detección};
-    \draw[arrow, red] (5,2.3) -- (6,2.7);
+    \visible<4->{
+    \node[draw=orange, fill=orange!20, rounded corners] at (5.5,1.5) {\small Timeout 10s};
+    \draw[arrow, orange, thick] (w2fail.east) -- (4.5,1.5);
     }
     
-    % Recovery
-    \visible<6->{
-    \node[draw, rectangle, fill=green!20] at (7.5,3) {Recuperación};
-    \draw[arrow] (6.5,3) -- (7,3);
+    % Redistribution
+    \visible<5->{
+    \draw[arrow, green!60!black, thick, bend left=20] (master) to node[above, sloped] {\tiny redistribuir} (w1);
+    \draw[arrow, green!60!black, thick, bend right=20] (master) to node[above, sloped] {\tiny redistribuir} (w3);
     }
 \end{tikzpicture}
 \end{center}
 
-\visible<7->{
+\visible<6->{
 \begin{block}{Mecanismo de Heartbeat}
     \begin{itemize}
-        \item Intervalo: 3 segundos
-        \item Timeout: 10 segundos
-        \item Acción: Marcar nodo como caído
+        \item Intervalo de verificación: 3 segundos
+        \item Timeout de fallo: 10 segundos
+        \item Acción: Redistribuir trabajo a nodos activos
+        \item Estado: Marcar worker como inactivo
     \end{itemize}
 \end{block}
 }
@@ -445,6 +458,32 @@ Java cluster started successfully!
 Master node running on port 5000
 3 worker nodes connected
 \end{lstlisting}
+\end{frame}
+
+% Cliente TypeScript
+\begin{frame}[fragile]
+\frametitle{Cliente TypeScript}
+\begin{block}{Características}
+    \begin{itemize}
+        \item<1-> Cliente completo en TypeScript/Node.js
+        \item<2-> Compatible con clusters Java y Python
+        \item<3-> Interfaz CLI idéntica
+        \item<4-> Comunicación asíncrona con Promises
+        \item<5-> Tipado fuerte con interfaces
+    \end{itemize}
+\end{block}
+
+\visible<6->{
+\begin{lstlisting}[style=terminal]
+$ npm start -- localhost 5000
+Connected to master at localhost:5000
+Enter commands (type "help" for usage, "exit" to quit):
+> create-double ts-array 5000
+Create array response: {"status":"created"}
+> apply ts-array example1
+Apply operation response: {"status":"processing"}
+\end{lstlisting}
+}
 \end{frame}
 
 % Cliente Interactivo
@@ -547,11 +586,12 @@ INFO: Sent result to master
 \frametitle{Conclusiones}
 \begin{block}{Logros}
     \begin{itemize}
-        \item<1-> Librería funcional en Java y Python
+        \item<1-> Librería funcional en Java, Python y TypeScript
         \item<2-> Procesamiento verdaderamente distribuido
         \item<3-> Paralelización efectiva por nodo
         \item<4-> Tolerancia a fallos básica implementada
         \item<5-> Sin dependencias de frameworks externos
+        \item<6-> Interoperabilidad entre lenguajes
     \end{itemize}
 \end{block}
 
@@ -578,14 +618,14 @@ INFO: Sent result to master
 
 % Preguntas
 \begin{frame}
-\frametitle{¿Preguntas?}
+\frametitle{Preguntas}
 \begin{center}
 \Large{Gracias por su atención}
 
 \vspace{1cm}
 
 \normalsize
-GitHub: \url{github.com/andre/distributed-array-lib}
+GitHub: \url{https://github.com/A-PachecoT/distributed-array-lib}
 
 \vspace{0.5cm}
 

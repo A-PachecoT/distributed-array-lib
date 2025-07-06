@@ -1,6 +1,10 @@
 # Distributed Array Library
 
-A concurrent, distributed, and fault-tolerant library for distributed arrays (DArrayInt and DArrayDouble) implemented in Java and Python using only native sockets and threads.
+A concurrent, distributed, and fault-tolerant library for distributed arrays (DArrayInt and DArrayDouble) implemented in Java, Python, and TypeScript using only native sockets and threads.
+
+GitHub Repository: https://github.com/A-PachecoT/distributed-array-lib
+
+Developed by: André Pacheco, Arbues Perez, and Sergio Pezo
 
 ## Features
 
@@ -8,7 +12,7 @@ A concurrent, distributed, and fault-tolerant library for distributed arrays (DA
 - **Automatic Segmentation**: Arrays are automatically segmented across worker nodes
 - **Parallel Processing**: Multi-threaded processing on each node using all CPU cores
 - **Fault Tolerance**: Heartbeat mechanism for node health monitoring
-- **Cross-Language**: Implementations in both Java and Python
+- **Cross-Language**: Implementations in Java, Python, and TypeScript
 - **Native Implementation**: Uses only sockets and threads, no external frameworks
 
 ## Architecture
@@ -64,6 +68,22 @@ cd python
 python3 client/distributed_array_client.py localhost 5001
 ```
 
+### TypeScript Implementation
+
+1. Install dependencies:
+```bash
+cd typescript
+npm install
+```
+
+2. Use existing Java or Python cluster (port 5000 or 5001)
+
+3. Run the TypeScript client:
+```bash
+cd scripts
+./start-typescript-client.sh localhost 5000
+```
+
 ## Client Commands
 
 - `create-int <array_id> <size>` - Create an integer array
@@ -112,6 +132,12 @@ distributed-array-lib/
 │   ├── master/          # Master node implementation
 │   ├── worker/          # Worker node implementation
 │   └── client/          # Client application
+├── typescript/
+│   ├── src/
+│   │   ├── common/      # Shared types and interfaces
+│   │   └── client/      # Client application
+│   ├── package.json     # Node.js dependencies
+│   └── tsconfig.json    # TypeScript configuration
 ├── scripts/             # Deployment and testing scripts
 └── docs/                # Documentation
 ```
@@ -124,6 +150,7 @@ The system uses JSON messages for communication. See `docs/protocol.md` for deta
 
 - Java: Logs are written to `master.log` and `worker-*.log`
 - Python: Logs are written to console and log files
+- TypeScript: Console output only (client-side)
 
 ## Performance
 
