@@ -1,0 +1,69 @@
+    \documentclass{beamer}
+    \usepackage{amsfonts,amsmath,oldgerm}
+    \usetheme{sintef}
+    \usepackage{xeCJK}
+    \usepackage{listings}
+    \usepackage{xcolor}
+    \usepackage{amsmath}
+    \definecolor{codegray}{rgb}{0.95,0.95,0.95}
+    \newcommand{\testcolor}[1]{\colorbox{#1}{\textcolor{#1}{test}}~\texttt{#1}}
+    
+    \usefonttheme[onlymath]{serif}
+    
+    \titlebackground*{assets/background}
+    
+    \newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
+    
+    \title{Título}
+    \subtitle{Subtítulo}
+    \course{Análisis y diseño de Algoritmos}
+    \author{André Pacheco}
+    % \IDnumber{1234567}
+    \date{ --, --, 2024}
+    
+    \begin{document}
+    \maketitle
+    
+    
+    % Start a section
+    \section{Problema 1}
+    
+    % Begin a slide
+    \begin{frame}[fragile]
+    
+    % Title of the slide
+    \frametitle{Problema}
+    
+    % Start a block
+    \begin{block}{Título del bloque}
+        Contenido del bloque
+    \end{block}
+    
+    % Start code
+    \begin{lstlisting}[language=Python, backgroundcolor=\color{codegray}]
+    import numpy as np
+    from numpy import linalg as LA
+    
+    
+    \end{lstlisting}
+    \end{frame}
+    
+    
+    \begin{frame}[fragile]
+    \frametitle{Resultado}
+    
+    El resultado es:
+    \begin{verbatim}
+    
+    
+    \end{verbatim}
+    
+    \end{frame}
+    
+    
+    
+    
+    
+    \backmatter
+    \end{document}
+    

@@ -1,0 +1,12 @@
+Jul 06, 2025 2:50:02 PM master.MasterNode start
+INFO: Master node started on port 5000
+Jul 06, 2025 2:50:04 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-0
+Jul 06, 2025 2:50:04 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-1
+Jul 06, 2025 2:57:49 PM master.MasterNode start
+INFO: Master node started on port 5000
+Jul 06, 2025 2:57:51 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-1
+Jul 06, 2025 2:57:51 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-0

@@ -1,0 +1,18 @@
+\frametitle{Logs del Sistema}
+\begin{lstlisting}[style=terminal, basicstyle=\tiny\ttfamily\color{terminalwhite}]
+master.log
+INFO: Master node started on port 5000
+INFO: Worker registered: worker-0 from 127.0.0.1
+INFO: Worker registered: worker-1 from 127.0.0.1
+INFO: Worker registered: worker-2 from 127.0.0.1
+INFO: Received array creation request: math-array (10000 elements)
+INFO: Array segmented: 3 segments distributed
+INFO: Processing operation: example1 on math-array
+
+worker-0.log
+INFO: Registered with master node
+INFO: Received double array segment: math-array with 3333 elements
+INFO: Processing Example 1 using 4 threads
+INFO: Completed Example 1 processing for math-array
+INFO: Sent result to master
+\end{lstlisting}

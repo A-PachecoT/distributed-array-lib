@@ -1,0 +1,7 @@
+2025-07-06 14:50:06,848 - MasterNode - INFO - Master node started on port 5001
+2025-07-06 14:50:08,901 - MasterNode - INFO - Worker registered: worker-0 from ('127.0.0.1', 58294)
+2025-07-06 14:50:08,915 - MasterNode - INFO - Worker registered: worker-1 from ('127.0.0.1', 58296)
+2025-07-06 14:50:10,882 - MasterNode - ERROR - Error handling connection: Expecting ',' delimiter: line 1 column 8193 (char 8192)
+2025-07-06 14:57:53,695 - MasterNode - INFO - Master node started on port 5001
+2025-07-06 14:57:55,721 - MasterNode - INFO - Worker registered: worker-1 from ('127.0.0.1', 57592)
+2025-07-06 14:57:55,726 - MasterNode - INFO - Worker registered: worker-0 from ('127.0.0.1', 57602)

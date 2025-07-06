@@ -1,0 +1,178 @@
+\documentclass{beamer}
+\usepackage{amsfonts,amsmath,oldgerm}
+\usetheme{sintef}
+\usepackage{xeCJK}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+\usepackage{minted}
+
+\newcommand{\testcolor}[1]{\colorbox{#1}{\textcolor{#1}{test}}~\texttt{#1}}
+
+\usefonttheme[onlymath]{serif}
+
+\titlebackground*{assets/background}
+
+\newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
+
+\title{Título}
+\subtitle{Subtítulo}
+\course{Análisis y diseño de Algoritmos}
+\author{André Pacheco}
+% \IDnumber{1234567}
+\date{ --, --, 2024}
+
+
+% Configuración adicional para algorithm2e
+\SetAlFnt{\scriptsize}
+\SetAlCapFnt{\footnotesize}
+\SetAlCapNameFnt{\footnotesize}
+\SetAlCapHSkip{0pt}
+\IncMargin{1em}
+
+% Configuración en español
+\SetKwInput{KwIn}{Entrada}
+\SetKwInput{KwOut}{Salida}
+\SetKwFor{While}{mientras}{hacer}{fin mientras}
+\SetKwIF{If}{ElseIf}{Else}{si}{entonces}{sino si}{sino}{fin si}
+\SetKwFor{For}{para}{hacer}{fin para}
+\SetKwRepeat{Repeat}{repetir}{hasta que}
+\SetKwBlock{Begin}{inicio}{fin}
+
+\begin{document}
+\maketitle
+
+\section{Método de Bisección para Optimización}
+
+\begin{frame}
+\frametitle{Descripción}
+\begin{itemize}
+    \item Busca el mínimo de una función unimodal en un intervalo cerrado
+    \item Divide repetidamente el intervalo, seleccionando el subintervalo con el mínimo
+    \item Simple y robusto, aunque relativamente lento
+\end{itemize}
+\textit{Observación}: Análogo a la búsqueda binaria, pero buscando el punto mínimo de la función
+\end{frame}
+
+\begin{frame}
+\frametitle{Intuición del Algoritmo}
+\begin{itemize}
+    \item Se basa en la naturaleza de las funciones unimodales
+    \item Divide el intervalo en tres partes usando dos puntos internos
+    \item Evalúa la función en estos puntos y en el punto medio
+    \item Compara los valores para determinar en qué tercio \textit{no} está el mínimo
+    \item Descarta ese tercio y repite el proceso con el intervalo reducido
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Algoritmo}
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwIn{$f$, $a$, $b$, $\epsilon$}
+\KwOut{Punto mínimo aproximado}
+\While{$b - a > \epsilon$}{
+    $m \gets (a + b) / 2$\;
+    $x_1 \gets (a + m) / 2$\;
+    $x_2 \gets (m + b) / 2$\;
+    \eIf{$f(x_1) < f(m)$}{
+        $b \gets m$\;
+    }{
+        \eIf{$f(x_2) < f(m)$}{
+            $a \gets m$\;
+        }{
+            $a \gets x_1$\;
+            $b \gets x_2$\;
+        } % OJO: la diapositiva SOLO admite hasta 10 líneas de código por defecto antes de que se pase del espacio admitido
+    }
+}
+\Return{$(a + b) / 2$}\;
+\caption{Método de Bisección para Optimización}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ejemplo Paso a Paso (1/2)}
+Función: $f(x) = (x - 2)^2 + 1$
+\begin{enumerate}
+    \item \textbf{Inicialización}:
+    \begin{itemize}
+        \item $a = 0$, $b = 3$
+    \end{itemize}
+    \item \textbf{Primera Iteración}:
+    \begin{itemize}
+        \item $m = 1.5$, $x_1 = 0.75$, $x_2 = 2.25$
+        \item $f(x_1) = 2.5625$, $f(m) = 1.25$, $f(x_2) = 1.0625$
+        \item Actualizar: $a = 1.5$, $b = 3$
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ejemplo Paso a Paso (2/2)}
+\begin{enumerate}\setcounter{enumi}{2}
+    \item \textbf{Segunda Iteración}:
+    \begin{itemize}
+        \item $m = 2.25$, $x_1 = 1.875$, $x_2 = 2.625$
+        \item $f(x_1) = 1.015625$, $f(m) = 1.0625$, $f(x_2) = 1.390625$
+        \item Actualizar: $a = 1.5$, $b = 2.25$
+    \end{itemize}
+    \item \textbf{Tercera Iteración}:
+    \begin{itemize}
+        \item $m = 1.875$, $x_1 = 1.6875$, $x_2 = 2.0625$
+        \item $f(x_1) = 1.099609375$, $f(m) = 1.015625$, $f(x_2) = 1.00390625$
+        \item Actualizar: $a = 1.875$, $b = 2.25$
+    \end{itemize}
+\end{enumerate}
+
+
+El proceso continúa hasta alcanzar la precisión deseada.
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Código en Python (1/2)}
+\begin{minted}[fontsize=\footnotesize, bgcolor=codegray]{python}
+def biseccion_optimizacion(f, a, b, epsilon):
+    while b - a > epsilon:
+        m = (a + b) / 2
+        x1 = (a + m) / 2
+        x2 = (m + b) / 2
+        if f(x1) < f(m):
+            b = m
+        elif f(x2) < f(m):
+            a = m
+        else:
+            a, b = x1, x2
+    return (a + b) / 2
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Código en Python (2/2)}
+\begin{minted}[fontsize=\footnotesize, bgcolor=codegray]{python}
+# Ejemplo de uso
+def f(x):
+    return (x - 2)**2 + 1
+
+a, b = 0, 3
+epsilon = 0.001
+minimo = biseccion_optimizacion(f, a, b, epsilon)
+print(f"Punto mínimo aprox.: {minimo}")
+print(f"Valor mínimo aprox.: {f(minimo)}")
+\end{minted}
+
+\begin{minted}[fontsize=\footnotesize, bgcolor=codegray]{python}
+El punto mínimo aproximado es: 1.9998779296875
+El valor mínimo aproximado es: 1.0000000149011612
+\end{minted}
+\end{frame}
+
+\backmatter
+\end{document}

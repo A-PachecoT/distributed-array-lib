@@ -1,0 +1,605 @@
+\documentclass{beamer}
+\usepackage{amsfonts,amsmath,oldgerm}
+\usetheme{sintef}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,calc,fit,decorations.pathreplacing}
+
+% Color definitions
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{terminalblack}{rgb}{0.1,0.1,0.1}
+\definecolor{terminalgreen}{rgb}{0.0,1.0,0.0}
+\definecolor{terminalwhite}{rgb}{0.9,0.9,0.9}
+\definecolor{terminalred}{rgb}{1.0,0.3,0.3}
+\definecolor{terminalyellow}{rgb}{1.0,1.0,0.4}
+\definecolor{terminalblue}{rgb}{0.4,0.7,1.0}
+
+% TikZ styles
+\tikzset{
+    master/.style={draw, rectangle, fill=blue!20, minimum width=3cm, minimum height=1.5cm, text centered, rounded corners},
+    worker/.style={draw, rectangle, fill=green!20, minimum width=2.5cm, minimum height=1.2cm, text centered, rounded corners},
+    client/.style={draw, rectangle, fill=orange!20, minimum width=2.5cm, minimum height=1.2cm, text centered, rounded corners},
+    arrow/.style={->, >=stealth, thick},
+    data/.style={draw, rectangle, fill=yellow!10, minimum width=2cm, minimum height=0.8cm, text centered},
+    socket/.style={<->, >=stealth, thick, red}
+}
+
+% Terminal style listing
+\lstdefinestyle{terminal}{
+    backgroundcolor=\color{terminalblack},
+    basicstyle=\small\ttfamily\color{terminalwhite},
+    keywordstyle=\color{terminalgreen},
+    stringstyle=\color{terminalyellow},
+    commentstyle=\color{terminalblue},
+    frame=single,
+    frameround=tttt,
+    framesep=4pt,
+    breaklines=true,
+    showstringspaces=false,
+    columns=fullflexible,
+    keepspaces=true,
+    xleftmargin=0pt,
+    xrightmargin=0pt
+}
+
+\usefonttheme[onlymath]{serif}
+
+\titlebackground*{assets/background}
+
+\newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
+
+\title{Librería Distribuida para Arrays}
+\subtitle{Procesamiento Concurrente y Distribuido}
+\course{CC4P1 Programación Concurrente y Distribuida}
+\author{André Pacheco}
+\date{Julio 2025}
+
+\begin{document}
+\maketitle
+
+% Índice
+\begin{frame}
+\frametitle{Agenda}
+\begin{itemize}
+    \item<1-> Objetivo del Proyecto
+    \item<2-> Arquitectura y Diseño
+    \item<3-> Implementación
+    \item<4-> Protocolo de Comunicación
+    \item<5-> Ejemplos de Operaciones
+    \item<6-> Tolerancia a Fallos
+    \item<7-> Demostración
+    \item<8-> Conclusiones
+\end{itemize}
+\end{frame}
+
+% Objetivo
+\begin{frame}
+\frametitle{Objetivo del Proyecto}
+\begin{block}{Desarrollar una librería distribuida}
+    \begin{itemize}
+        \item<1-> Arrays distribuidos: \texttt{DArrayInt} y \texttt{DArrayDouble}
+        \item<2-> Procesamiento concurrente y paralelo
+        \item<3-> Comunicación por sockets TCP nativos
+        \item<4-> Sin frameworks externos
+        \item<5-> Tolerancia a fallos básica
+    \end{itemize}
+\end{block}
+
+\onslide<6->{
+\begin{block}{Implementaciones}
+    \begin{itemize}
+        \item Java 8+
+        \item Python 3.6+
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Arquitectura
+\begin{frame}
+\frametitle{Arquitectura del Sistema}
+\begin{center}
+\begin{tikzpicture}[scale=0.9, transform shape]
+    % Master node
+    \node[master] (master) at (0,3) {Nodo Maestro};
+    
+    % Worker nodes
+    \visible<2->{
+    \node[worker] (w1) at (-3,0) {Worker 0};
+    \node[worker] (w2) at (0,0) {Worker 1};
+    \node[worker] (w3) at (3,0) {Worker 2};
+    }
+    
+    % Client
+    \visible<3->{
+    \node[client] (client) at (0,6) {Cliente};
+    }
+    
+    % Connections
+    \visible<2->{
+    \draw[socket] (master) -- (w1) node[midway, left] {TCP};
+    \draw[socket] (master) -- (w2) node[midway, right] {TCP};
+    \draw[socket] (master) -- (w3) node[midway, right] {TCP};
+    }
+    
+    \visible<3->{
+    \draw[arrow, blue, thick] (client) -- (master);
+    }
+    
+    % Data distribution
+    \visible<4->{
+    \node[data, below=0.3cm of w1] (d1) {Segmento 0};
+    \node[data, below=0.3cm of w2] (d2) {Segmento 1};
+    \node[data, below=0.3cm of w3] (d3) {Segmento 2};
+    }
+\end{tikzpicture}
+\end{center}
+
+\visible<5->{
+\begin{block}{Características}
+    \begin{itemize}
+        \item Arquitectura maestro-trabajador
+        \item Distribución automática de datos
+        \item Comunicación bidireccional
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Implementación - Clases principales
+\begin{frame}
+\frametitle{Implementación - Estructura}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{block}{Java}
+    \begin{itemize}
+        \item<1-> \texttt{MasterNode.java}
+        \item<2-> \texttt{WorkerNode.java}
+        \item<3-> \texttt{DArrayInt.java}
+        \item<3-> \texttt{DArrayDouble.java}
+        \item<4-> \texttt{Message.java}
+        \item<5-> \texttt{DistributedArrayClient.java}
+    \end{itemize}
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{Python}
+    \begin{itemize}
+        \item<1-> \texttt{master\_node.py}
+        \item<2-> \texttt{worker\_node.py}
+        \item<3-> \texttt{darray.py}
+        \item<4-> \texttt{message.py}
+        \item<5-> \texttt{distributed\_array\_client.py}
+    \end{itemize}
+\end{block}
+\end{columns}
+\end{frame}
+
+% Segmentación de Arrays
+\begin{frame}
+\frametitle{Segmentación de Arrays}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Original array
+    \visible<1->{
+    \draw[thick] (0,4) rectangle (8,5);
+    \node at (4,4.5) {Array Original (10,000 elementos)};
+    }
+    
+    % Segmentation arrows
+    \visible<2->{
+    \draw[arrow, red] (2,3.8) -- (2,3);
+    \draw[arrow, red] (4,3.8) -- (4,3);
+    \draw[arrow, red] (6,3.8) -- (6,3);
+    }
+    
+    % Segments
+    \visible<3->{
+    \draw[fill=green!20] (0,2) rectangle (2.5,3);
+    \node at (1.25,2.5) {Seg 0};
+    \node at (1.25,1.7) {\small 3,333 elem};
+    
+    \draw[fill=blue!20] (3,2) rectangle (5.5,3);
+    \node at (4.25,2.5) {Seg 1};
+    \node at (4.25,1.7) {\small 3,333 elem};
+    
+    \draw[fill=orange!20] (6,2) rectangle (8.5,3);
+    \node at (7.25,2.5) {Seg 2};
+    \node at (7.25,1.7) {\small 3,334 elem};
+    }
+    
+    % Workers
+    \visible<4->{
+    \draw[arrow] (1.25,1.5) -- (1.25,0.5);
+    \draw[arrow] (4.25,1.5) -- (4.25,0.5);
+    \draw[arrow] (7.25,1.5) -- (7.25,0.5);
+    
+    \node[worker, scale=0.7] at (1.25,0) {Worker 0};
+    \node[worker, scale=0.7] at (4.25,0) {Worker 1};
+    \node[worker, scale=0.7] at (7.25,0) {Worker 2};
+    }
+\end{tikzpicture}
+\end{center}
+
+\visible<5->{
+\begin{block}{Algoritmo de Segmentación}
+    \begin{itemize}
+        \item División equitativa: $\text{tamaño\_segmento} = \text{total} / \text{workers}$
+        \item Manejo de residuo distribuido
+        \item Asignación round-robin
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Protocolo de Comunicación
+\begin{frame}[fragile]
+\frametitle{Protocolo de Comunicación}
+\begin{block}{Formato JSON}
+\begin{lstlisting}[basicstyle=\small\ttfamily]
+{
+  "type": "MESSAGE_TYPE",
+  "from": "NODE_ID",
+  "to": "NODE_ID", 
+  "timestamp": 1234567890,
+  "data": {}
+}
+\end{lstlisting}
+\end{block}
+
+\visible<2->{
+\begin{block}{Tipos de Mensajes}
+    \begin{itemize}
+        \item<2-> \texttt{REGISTER\_WORKER} - Registro de trabajador
+        \item<3-> \texttt{DISTRIBUTE\_ARRAY} - Distribución de segmentos
+        \item<4-> \texttt{PROCESS\_SEGMENT} - Orden de procesamiento
+        \item<5-> \texttt{HEARTBEAT} - Verificación de salud
+        \item<6-> \texttt{SEGMENT\_RESULT} - Resultado procesado
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Procesamiento Paralelo
+\begin{frame}
+\frametitle{Procesamiento Paralelo}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Worker node
+    \node[worker, minimum width=4cm] (worker) at (0,4) {Worker Node};
+    
+    % CPU cores
+    \visible<2->{
+    \node[draw, circle, fill=yellow!30] (c1) at (-1.5,2) {Core 0};
+    \node[draw, circle, fill=yellow!30] (c2) at (-0.5,2) {Core 1};
+    \node[draw, circle, fill=yellow!30] (c3) at (0.5,2) {Core 2};
+    \node[draw, circle, fill=yellow!30] (c4) at (1.5,2) {Core 3};
+    
+    \draw[arrow] (worker) -- (c1);
+    \draw[arrow] (worker) -- (c2);
+    \draw[arrow] (worker) -- (c3);
+    \draw[arrow] (worker) -- (c4);
+    }
+    
+    % Thread pool
+    \visible<3->{
+    \node[draw, rectangle, fill=blue!10, minimum width=4cm] (pool) at (0,0.5) {ThreadPool};
+    \draw[arrow] (c1) -- (pool);
+    \draw[arrow] (c2) -- (pool);
+    \draw[arrow] (c3) -- (pool);
+    \draw[arrow] (c4) -- (pool);
+    }
+    
+    % Data chunks
+    \visible<4->{
+    \node[data, scale=0.7] at (-3,-1) {Chunk 0};
+    \node[data, scale=0.7] at (-1,-1) {Chunk 1};
+    \node[data, scale=0.7] at (1,-1) {Chunk 2};
+    \node[data, scale=0.7] at (3,-1) {Chunk 3};
+    }
+\end{tikzpicture}
+\end{center}
+
+\visible<5->{
+\begin{block}{Estrategia}
+    \begin{itemize}
+        \item Detección automática de núcleos: \texttt{Runtime.availableProcessors()}
+        \item División del segmento en chunks
+        \item Procesamiento concurrente con ThreadPool
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Ejemplo 1 - Operaciones Matemáticas
+\begin{frame}
+\frametitle{Ejemplo 1: Operaciones Matemáticas}
+\begin{block}{Fórmula}
+$$\text{resultado} = \frac{(\sin(x) + \cos(x))^2}{\sqrt{|x|} + 1}$$
+\end{block}
+
+\visible<2->{
+\begin{block}{Implementación Java}
+    \begin{itemize}
+        \item Procesamiento paralelo con ThreadPool
+        \item División del segmento en chunks
+        \item Cada thread procesa su chunk independientemente
+    \end{itemize}
+\end{block}
+}
+
+\visible<3->{
+\begin{block}{Implementación Python}
+    \begin{itemize}
+        \item Uso de ThreadPoolExecutor
+        \item NumPy para operaciones vectorizadas
+        \item Procesamiento concurrente por chunks
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Ejemplo 2 - Evaluación Condicional
+\begin{frame}
+\frametitle{Ejemplo 2: Evaluación Condicional}
+\begin{block}{Condición}
+Si $x \bmod 3 = 0$ o $500 \leq x \leq 1000$:
+$$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
+\end{block}
+
+\visible<2->{
+\begin{block}{Procesamiento}
+    \begin{itemize}
+        \item Evaluación condicional para cada elemento
+        \item Aplicación de transformación logarítmica
+        \item Preservación de valores que no cumplen condición
+    \end{itemize}
+\end{block}
+}
+
+\visible<3->{
+\begin{block}{Resiliencia}
+    \begin{itemize}
+        \item Manejo de excepciones por thread
+        \item Continuación ante fallos parciales
+        \item Consolidación de resultados válidos
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Tolerancia a Fallos
+\begin{frame}
+\frametitle{Tolerancia a Fallos}
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+    % Timeline
+    \draw[thick, ->] (0,0) -- (8,0) node[right] {Tiempo};
+    
+    % Master
+    \node[master, scale=0.7] at (0,2) {Master};
+    
+    % Worker healthy
+    \visible<1-3>{
+    \node[worker, scale=0.7] at (2,2) {Worker};
+    \draw[<->, green, thick] (0.8,2) -- (1.2,2);
+    }
+    
+    % Heartbeats
+    \visible<2->{
+    \foreach \x in {2,3,4} {
+        \draw[arrow, blue] (\x,1.5) -- (\x,2.5);
+        \node[scale=0.6] at (\x,1.3) {HB};
+    }
+    }
+    
+    % Worker fails
+    \visible<4->{
+    \node[worker, scale=0.7, fill=red!30] at (5,2) {Worker};
+    \draw[->, red, thick] (4.5,2) -- (5.5,2);
+    \node[scale=0.6] at (5,1.3) {Timeout};
+    }
+    
+    % Detection
+    \visible<5->{
+    \node[draw, rectangle, fill=yellow!20] at (6,3) {Detección};
+    \draw[arrow, red] (5,2.3) -- (6,2.7);
+    }
+    
+    % Recovery
+    \visible<6->{
+    \node[draw, rectangle, fill=green!20] at (7.5,3) {Recuperación};
+    \draw[arrow] (6.5,3) -- (7,3);
+    }
+\end{tikzpicture}
+\end{center}
+
+\visible<7->{
+\begin{block}{Mecanismo de Heartbeat}
+    \begin{itemize}
+        \item Intervalo: 3 segundos
+        \item Timeout: 10 segundos
+        \item Acción: Marcar nodo como caído
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Demostración - Terminal Output
+\begin{frame}[fragile]
+\frametitle{Demostración - Inicio del Cluster}
+\begin{lstlisting}[style=terminal]
+$ ./start-java-cluster.sh
+Starting Java distributed array cluster...
+Starting master node on port 5000...
+Master node PID: 12345
+Starting worker-0...
+Worker-0 PID: 12346
+Starting worker-1...
+Worker-1 PID: 12347
+Starting worker-2...
+Worker-2 PID: 12348
+
+Java cluster started successfully!
+Master node running on port 5000
+3 worker nodes connected
+\end{lstlisting}
+\end{frame}
+
+% Cliente Interactivo
+\begin{frame}[fragile]
+\frametitle{Demostración - Cliente Interactivo}
+\begin{lstlisting}[style=terminal]
+$ java -cp "out:lib/*" client.DistributedArrayClient localhost 5000
+Connected to master at localhost:5000
+Enter commands (type 'help' for usage, 'exit' to quit):
+> create-double math-array 10000
+Create array response: {"type":"OPERATION_COMPLETE",
+  "data":{"arrayId":"math-array","status":"created"}}
+
+> apply math-array example1
+Apply operation response: {"type":"OPERATION_COMPLETE",
+  "data":{"status":"processing"}}
+
+> get math-array
+Get result response: {"type":"OPERATION_COMPLETE",
+  "data":{"status":"complete","result":"Operation completed"}}
+\end{lstlisting}
+\end{frame}
+
+% Logs del Sistema
+\begin{frame}[fragile]
+\frametitle{Logs del Sistema}
+\begin{lstlisting}[style=terminal, basicstyle=\tiny\ttfamily\color{terminalwhite}]
+master.log
+INFO: Master node started on port 5000
+INFO: Worker registered: worker-0 from 127.0.0.1
+INFO: Worker registered: worker-1 from 127.0.0.1
+INFO: Worker registered: worker-2 from 127.0.0.1
+INFO: Received array creation request: math-array (10000 elements)
+INFO: Array segmented: 3 segments distributed
+INFO: Processing operation: example1 on math-array
+
+worker-0.log
+INFO: Registered with master node
+INFO: Received double array segment: math-array with 3333 elements
+INFO: Processing Example 1 using 4 threads
+INFO: Completed Example 1 processing for math-array
+INFO: Sent result to master
+\end{lstlisting}
+\end{frame}
+
+% Rendimiento
+\begin{frame}
+\frametitle{Rendimiento y Escalabilidad}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{block}{Paralelización}
+    \begin{itemize}
+        \item<1-> Uso de todos los núcleos
+        \item<2-> ThreadPool eficiente
+        \item<3-> División automática de trabajo
+    \end{itemize}
+\end{block}
+
+\visible<4->{
+\begin{block}{Distribución}
+    \begin{itemize}
+        \item Segmentación equitativa
+        \item Comunicación asíncrona
+        \item Procesamiento independiente
+    \end{itemize}
+\end{block}
+}
+
+\column{0.5\textwidth}
+\visible<5->{
+\begin{block}{Métricas (10,000 elementos)}
+    \begin{itemize}
+        \item 1 worker: 250ms
+        \item 2 workers: 140ms
+        \item 3 workers: 95ms
+        \item 4 workers: 75ms
+    \end{itemize}
+\end{block}
+}
+\end{columns}
+
+\visible<6->{
+\begin{center}
+\begin{tikzpicture}[scale=0.6]
+    \draw[->] (0,0) -- (5,0) node[right] {Workers};
+    \draw[->] (0,0) -- (0,4) node[above] {Tiempo (ms)};
+    
+    \draw[thick, blue] (1,3.5) -- (2,2) -- (3,1.3) -- (4,1);
+    
+    \foreach \x in {1,2,3,4} {
+        \draw (\x,0.1) -- (\x,-0.1) node[below] {\x};
+    }
+\end{tikzpicture}
+\end{center}
+}
+\end{frame}
+
+% Conclusiones
+\begin{frame}
+\frametitle{Conclusiones}
+\begin{block}{Logros}
+    \begin{itemize}
+        \item<1-> Librería funcional en Java y Python
+        \item<2-> Procesamiento verdaderamente distribuido
+        \item<3-> Paralelización efectiva por nodo
+        \item<4-> Tolerancia a fallos básica implementada
+        \item<5-> Sin dependencias de frameworks externos
+    \end{itemize}
+\end{block}
+
+\visible<6->{
+\begin{block}{Aplicaciones}
+    \begin{itemize}
+        \item Procesamiento de grandes conjuntos de datos
+        \item Cálculos científicos distribuidos
+        \item Análisis de datos en paralelo
+    \end{itemize}
+\end{block}
+}
+
+\visible<7->{
+\begin{block}{Mejoras Futuras}
+    \begin{itemize}
+        \item Replicación activa completa
+        \item Recuperación automática con réplicas
+        \item Balanceo dinámico de carga
+    \end{itemize}
+\end{block}
+}
+\end{frame}
+
+% Preguntas
+\begin{frame}
+\frametitle{¿Preguntas?}
+\begin{center}
+\Large{Gracias por su atención}
+
+\vspace{1cm}
+
+\normalsize
+GitHub: \url{github.com/andre/distributed-array-lib}
+
+\vspace{0.5cm}
+
+\begin{tikzpicture}
+    \node[master] (m) at (0,0) {Master};
+    \node[worker] (w1) at (-2,-2) {W0};
+    \node[worker] (w2) at (0,-2) {W1};
+    \node[worker] (w3) at (2,-2) {W2};
+    
+    \draw[socket] (m) -- (w1);
+    \draw[socket] (m) -- (w2);
+    \draw[socket] (m) -- (w3);
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\end{document}
