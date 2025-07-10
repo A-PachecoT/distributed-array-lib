@@ -19,22 +19,22 @@ public class DistributedArrayClient {
 
     public void createIntArray(String arrayId, int size) throws IOException {
         try (Socket socket = new Socket(masterHost, masterPort);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
-            
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+
             int[] data = new int[size];
             for (int i = 0; i < size; i++) {
                 data[i] = ThreadLocalRandom.current().nextInt(1, 1001);
             }
-            
+
             Map<String, Object> messageData = new HashMap<>();
             messageData.put("arrayId", arrayId);
             messageData.put("dataType", "int");
             messageData.put("values", data);
-            
+
             Message createMsg = new Message(MessageType.CREATE_ARRAY, "client", "master", messageData);
             writer.println(gson.toJson(createMsg));
-            
+
             String response = reader.readLine();
             System.out.println("Create array response: " + response);
         }
@@ -42,22 +42,22 @@ public class DistributedArrayClient {
 
     public void createDoubleArray(String arrayId, int size) throws IOException {
         try (Socket socket = new Socket(masterHost, masterPort);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
-            
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+
             double[] data = new double[size];
             for (int i = 0; i < size; i++) {
                 data[i] = ThreadLocalRandom.current().nextDouble(1.0, 100.0);
             }
-            
+
             Map<String, Object> messageData = new HashMap<>();
             messageData.put("arrayId", arrayId);
             messageData.put("dataType", "double");
             messageData.put("values", data);
-            
+
             Message createMsg = new Message(MessageType.CREATE_ARRAY, "client", "master", messageData);
             writer.println(gson.toJson(createMsg));
-            
+
             String response = reader.readLine();
             System.out.println("Create array response: " + response);
         }
@@ -65,16 +65,16 @@ public class DistributedArrayClient {
 
     public void applyOperation(String arrayId, String operation) throws IOException {
         try (Socket socket = new Socket(masterHost, masterPort);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
-            
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+
             Map<String, Object> messageData = new HashMap<>();
             messageData.put("arrayId", arrayId);
             messageData.put("operation", operation);
-            
+
             Message applyMsg = new Message(MessageType.APPLY_OPERATION, "client", "master", messageData);
             writer.println(gson.toJson(applyMsg));
-            
+
             String response = reader.readLine();
             System.out.println("Apply operation response: " + response);
         }
@@ -82,15 +82,15 @@ public class DistributedArrayClient {
 
     public void getResult(String arrayId) throws IOException {
         try (Socket socket = new Socket(masterHost, masterPort);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
-            
+                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+
             Map<String, Object> messageData = new HashMap<>();
             messageData.put("arrayId", arrayId);
-            
+
             Message getMsg = new Message(MessageType.GET_RESULT, "client", "master", messageData);
             writer.println(gson.toJson(getMsg));
-            
+
             String response = reader.readLine();
             System.out.println("Get result response: " + response);
         }
@@ -119,9 +119,10 @@ public class DistributedArrayClient {
             System.out.print("> ");
             String line = scanner.nextLine();
             String[] parts = line.split(" ");
-            
-            if (parts.length == 0) continue;
-            
+
+            if (parts.length == 0)
+                continue;
+
             try {
                 switch (parts[0]) {
                     case "create-int":

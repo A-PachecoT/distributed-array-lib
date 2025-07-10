@@ -1,0 +1,5 @@
+2025-07-10 12:05:26,011 - WorkerNode-worker-2 - INFO - Registered with master node
+2025-07-10 12:05:27,038 - WorkerNode-worker-2 - INFO - Received REPLICA double array segment: math-array_3334 with 3333 elements
+2025-07-10 12:05:27,042 - WorkerNode-worker-2 - INFO - Received PRIMARY double array segment: math-array with 3333 elements
+2025-07-10 12:05:29,054 - WorkerNode-worker-2 - INFO - Completed Example 1 processing for math-array
+2025-07-10 12:05:29,056 - WorkerNode-worker-2 - INFO - Promoted double replica to primary for math-array_3334

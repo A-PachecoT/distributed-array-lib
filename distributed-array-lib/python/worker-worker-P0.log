@@ -1,0 +1,8 @@
+2025-07-10 12:06:57,114 - WorkerNode-worker-P0 - INFO - Registered with master node
+2025-07-10 12:06:59,114 - WorkerNode-worker-P0 - INFO - Received REPLICA double array segment: interop-test-array_0 with 3 elements
+2025-07-10 12:06:59,119 - WorkerNode-worker-P0 - INFO - Received PRIMARY double array segment: interop-test-array with 3 elements
+2025-07-10 12:07:01,123 - WorkerNode-worker-P0 - INFO - Completed Example 1 processing for interop-test-array
+2025-07-10 12:11:45,179 - WorkerNode-worker-P0 - INFO - Registered with master node
+2025-07-10 12:11:47,179 - WorkerNode-worker-P0 - INFO - Received REPLICA double array segment: interop-test-array_0 with 3 elements
+2025-07-10 12:11:47,188 - WorkerNode-worker-P0 - INFO - Received PRIMARY double array segment: interop-test-array with 3 elements
+2025-07-10 12:11:49,192 - WorkerNode-worker-P0 - INFO - Completed Example 1 processing for interop-test-array

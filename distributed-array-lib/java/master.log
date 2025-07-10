@@ -10,3 +10,99 @@ Jul 06, 2025 2:57:51 PM master.MasterNode handleWorkerRegistration
 INFO: Worker registered: worker-1
 Jul 06, 2025 2:57:51 PM master.MasterNode handleWorkerRegistration
 INFO: Worker registered: worker-0
+Jul 10, 2025 11:46:21 AM master.MasterNode start
+INFO: Master node started on port 5000
+Jul 10, 2025 11:46:23 AM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-0
+Jul 10, 2025 11:46:24 AM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-1
+Jul 10, 2025 11:46:25 AM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-2
+Jul 10, 2025 11:46:27 AM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-1
+Jul 10, 2025 11:46:27 AM master.MasterNode distributeArray
+INFO: Replicated segment 3334 to worker-0
+Jul 10, 2025 11:46:27 AM master.MasterNode distributeArray
+INFO: Replicated segment 6667 to worker-2
+Jul 10, 2025 11:46:29 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-2
+Jul 10, 2025 11:46:29 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-0
+Jul 10, 2025 11:46:29 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-1
+Jul 10, 2025 11:46:33 AM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-1
+Jul 10, 2025 11:46:33 AM master.MasterNode distributeArray
+INFO: Replicated segment 1667 to worker-0
+Jul 10, 2025 11:46:33 AM master.MasterNode distributeArray
+INFO: Replicated segment 3334 to worker-2
+Jul 10, 2025 11:46:35 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-2
+Jul 10, 2025 11:46:35 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-0
+Jul 10, 2025 11:46:35 AM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-1
+Jul 10, 2025 11:53:24 AM master.MasterNode start
+INFO: Master node started on port 6000
+Jul 10, 2025 11:53:27 AM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-J0
+Jul 10, 2025 12:06:52 PM master.MasterNode start
+INFO: Master node started on port 6000
+Jul 10, 2025 12:06:55 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-J0
+Jul 10, 2025 12:06:57 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-P0
+Jul 10, 2025 12:06:59 PM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-P0
+Jul 10, 2025 12:06:59 PM master.MasterNode distributeArray
+INFO: Replicated segment 3 to worker-J0
+Jul 10, 2025 12:07:01 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-P0
+Jul 10, 2025 12:07:01 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-J0
+Jul 10, 2025 12:11:40 PM master.MasterNode start
+INFO: Master node started on port 6000
+Jul 10, 2025 12:11:43 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-J0
+Jul 10, 2025 12:11:45 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-P0
+Jul 10, 2025 12:11:47 PM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-P0
+Jul 10, 2025 12:11:47 PM master.MasterNode distributeArray
+INFO: Replicated segment 3 to worker-J0
+Jul 10, 2025 12:11:49 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-P0
+Jul 10, 2025 12:11:49 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-J0
+Jul 10, 2025 12:12:26 PM master.MasterNode start
+INFO: Master node started on port 5000
+Jul 10, 2025 12:12:28 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-0
+Jul 10, 2025 12:12:29 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-1
+Jul 10, 2025 12:12:30 PM master.MasterNode handleWorkerRegistration
+INFO: Worker registered: worker-2
+Jul 10, 2025 12:12:32 PM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-1
+Jul 10, 2025 12:12:32 PM master.MasterNode distributeArray
+INFO: Replicated segment 3334 to worker-0
+Jul 10, 2025 12:12:32 PM master.MasterNode distributeArray
+INFO: Replicated segment 6667 to worker-2
+Jul 10, 2025 12:12:34 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-2
+Jul 10, 2025 12:12:34 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-1
+Jul 10, 2025 12:12:34 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-0
+Jul 10, 2025 12:12:38 PM master.MasterNode distributeArray
+INFO: Replicated segment 0 to worker-1
+Jul 10, 2025 12:12:38 PM master.MasterNode distributeArray
+INFO: Replicated segment 1667 to worker-0
+Jul 10, 2025 12:12:38 PM master.MasterNode distributeArray
+INFO: Replicated segment 3334 to worker-2
+Jul 10, 2025 12:12:40 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-1
+Jul 10, 2025 12:12:40 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-2
+Jul 10, 2025 12:12:40 PM master.MasterNode handleSegmentResult
+INFO: Received segment result from worker-0

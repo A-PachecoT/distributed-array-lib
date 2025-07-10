@@ -110,6 +110,9 @@ class WorkerNode:
                         message = Message.from_json(line)
                         self.handle_message(message)
                         
+            except ConnectionAbortedError:
+                self.logger.warning("Connection aborted.")
+                break
             except Exception as e:
                 self.logger.error(f"Error receiving message: {e}")
                 break
@@ -199,9 +202,19 @@ class WorkerNode:
         data = message.data
         array_id = data['arrayId']
         operation = data['operation']
+
+        # Find the primary segment key to identify the segmentId
+        segment_key = next((key for key, is_primary in self.is_primary.items() 
+                            if is_primary and key.startswith(f"{array_id}_")), None)
+
+        if segment_key is None:
+            self.logger.warning(f"No primary segment found for array {array_id} on this worker. Cannot process.")
+            return
+
+        segment_id = int(segment_key.split('_')[1])
         
         future = self.thread_pool.submit(self.process_operation, array_id, operation)
-        future.add_done_callback(lambda f: self.send_result(array_id, f.result()))
+        future.add_done_callback(lambda f: self.send_result(array_id, segment_id, f.result()))
     
     def process_operation(self, array_id: str, operation: str):
         if operation == "example1":
@@ -241,7 +254,7 @@ class WorkerNode:
         self.double_segments[f"{array_id}_result"] = result
         
         self.logger.info(f"Completed Example 1 processing for {array_id}")
-        return "completed"
+        return result.tolist()
     
     def process_example2(self, array_id: str):
         segment = self.int_segments.get(array_id)
@@ -274,15 +287,20 @@ class WorkerNode:
         self.int_segments[f"{array_id}_result"] = result
         
         self.logger.info(f"Completed Example 2 processing for {array_id}")
-        return "completed"
+        return result.tolist()
     
-    def send_result(self, array_id: str, status: str):
-        if status:
+    def send_result(self, array_id: str, segment_id: int, result_data: list):
+        if result_data:
             result_msg = Message(
                 MessageType.SEGMENT_RESULT,
                 self.worker_id,
                 "master",
-                {"arrayId": array_id, "status": status}
+                {
+                    "arrayId": array_id,
+                    "status": "completed",
+                    "segmentId": segment_id,
+                    "data": result_data
+                }
             )
             self.socket.send(result_msg.to_json().encode() + b'\n')
     

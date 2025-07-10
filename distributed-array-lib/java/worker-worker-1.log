@@ -2,3 +2,31 @@ Jul 06, 2025 2:50:04 PM worker.WorkerNode registerWithMaster
 INFO: Registered with master node
 Jul 06, 2025 2:57:51 PM worker.WorkerNode registerWithMaster
 INFO: Registered with master node
+Jul 10, 2025 11:46:24 AM worker.WorkerNode registerWithMaster
+INFO: Registered with master node
+Jul 10, 2025 11:46:27 AM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA double array segment: math-array_0.0 with 3334 elements
+Jul 10, 2025 11:46:27 AM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY double array segment: math-array with 3333 elements
+Jul 10, 2025 11:46:29 AM worker.WorkerNode processExample1
+INFO: Completed Example 1 processing for math-array
+Jul 10, 2025 11:46:33 AM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA int array segment: cond-array_0.0 with 1667 elements
+Jul 10, 2025 11:46:33 AM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY int array segment: cond-array with 1667 elements
+Jul 10, 2025 11:46:35 AM worker.WorkerNode processExample2
+INFO: Completed Example 2 processing for cond-array
+Jul 10, 2025 12:12:29 PM worker.WorkerNode registerWithMaster
+INFO: Registered with master node
+Jul 10, 2025 12:12:32 PM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA double array segment: math-array_0.0 with 3334 elements
+Jul 10, 2025 12:12:32 PM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY double array segment: math-array with 3333 elements
+Jul 10, 2025 12:12:34 PM worker.WorkerNode processExample1
+INFO: Completed Example 1 processing for math-array
+Jul 10, 2025 12:12:38 PM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA int array segment: cond-array_0.0 with 1667 elements
+Jul 10, 2025 12:12:38 PM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY int array segment: cond-array with 1667 elements
+Jul 10, 2025 12:12:40 PM worker.WorkerNode processExample2
+INFO: Completed Example 2 processing for cond-array

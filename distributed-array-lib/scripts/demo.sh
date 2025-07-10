@@ -73,18 +73,26 @@ run_java_demo() {
 # Function to run Python demo
 run_python_demo() {
     echo "=== Python Implementation Demo ==="
+    
+    # Check for venv
+    if [ ! -d "../python/venv" ]; then
+        echo "Python virtual environment not found. Please run 'setup_python_env.sh' in the 'scripts' directory first."
+        return 1
+    fi
+    PYTHON_EXEC="../python/venv/bin/python3"
+
     cd ../python
     
     # Start master
     echo "Starting Python master node..."
-    python3 master/master_node.py 5001 &
+    $PYTHON_EXEC master/master_node.py 5001 &
     MASTER_PID=$!
     sleep 2
     
     # Start 3 workers
     echo "Starting 3 Python worker nodes..."
     for i in {0..2}; do
-        python3 worker/worker_node.py worker-$i localhost 5001 &
+        $PYTHON_EXEC worker/worker_node.py worker-$i localhost 5001 &
         WORKER_PIDS[$i]=$!
         sleep 1
     done
@@ -95,7 +103,7 @@ run_python_demo() {
     
     # Run demo
     echo "Running demonstration..."
-    python3 <<EOF
+    $PYTHON_EXEC <<EOF
 import sys
 import time
 sys.path.append('.')
@@ -179,3 +187,6 @@ echo ""
 echo "Check the log files for detailed execution information:"
 echo "- Java: master.log, worker-*.log"
 echo "- Python: master.log, worker-*.log"
+echo ""
+echo "Before running the Python demo, make sure you have set up the environment by running:"
+echo "bash scripts/setup_python_env.sh"

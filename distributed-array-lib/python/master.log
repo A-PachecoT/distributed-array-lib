@@ -5,3 +5,19 @@
 2025-07-06 14:57:53,695 - MasterNode - INFO - Master node started on port 5001
 2025-07-06 14:57:55,721 - MasterNode - INFO - Worker registered: worker-1 from ('127.0.0.1', 57592)
 2025-07-06 14:57:55,726 - MasterNode - INFO - Worker registered: worker-0 from ('127.0.0.1', 57602)
+2025-07-10 12:05:22,003 - MasterNode - INFO - Master node started on port 5001
+2025-07-10 12:05:24,021 - MasterNode - INFO - Worker registered: worker-0 from ('127.0.0.1', 43202)
+2025-07-10 12:05:25,009 - MasterNode - INFO - Worker registered: worker-1 from ('127.0.0.1', 43204)
+2025-07-10 12:05:26,012 - MasterNode - INFO - Worker registered: worker-2 from ('127.0.0.1', 43206)
+2025-07-10 12:05:27,030 - MasterNode - INFO - Replicated segment 0 to worker-1
+2025-07-10 12:05:27,038 - MasterNode - INFO - Replicated segment 3334 to worker-2
+2025-07-10 12:05:27,042 - MasterNode - INFO - Replicated segment 6667 to worker-0
+2025-07-10 12:05:29,055 - MasterNode - ERROR - Lost connection to worker worker-1: Expecting ',' delimiter: line 1 column 8193 (char 8192)
+2025-07-10 12:05:29,055 - MasterNode - ERROR - Handling failure of worker: worker-1
+2025-07-10 12:05:29,055 - MasterNode - INFO - Promoted replica worker-2 for segment 3334 of array math-array
+2025-07-10 12:05:29,057 - MasterNode - ERROR - Lost connection to worker worker-2: Expecting ',' delimiter: line 1 column 8193 (char 8192)
+2025-07-10 12:05:29,058 - MasterNode - ERROR - Lost connection to worker worker-0: Expecting ',' delimiter: line 1 column 8193 (char 8192)
+2025-07-10 12:05:29,058 - MasterNode - INFO - Created new replica on worker-0 for segment 3334
+2025-07-10 12:05:29,058 - MasterNode - ERROR - Handling failure of worker: worker-2
+2025-07-10 12:05:29,058 - MasterNode - ERROR - Handling failure of worker: worker-0
+2025-07-10 12:05:33,046 - MasterNode - ERROR - Error handling connection: integer division or modulo by zero

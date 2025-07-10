@@ -19,12 +19,12 @@ public class WorkerNode {
     private PrintWriter writer;
     private final Map<String, int[]> intSegments = new ConcurrentHashMap<>();
     private final Map<String, double[]> doubleSegments = new ConcurrentHashMap<>();
-    
+
     // Separate storage for replicas
     private final Map<String, int[]> intReplicas = new ConcurrentHashMap<>();
     private final Map<String, double[]> doubleReplicas = new ConcurrentHashMap<>();
     private final Map<String, Boolean> isPrimary = new ConcurrentHashMap<>();
-    
+
     private final ExecutorService threadPool;
     private final ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1);
     private final Gson gson = new Gson();
@@ -56,9 +56,9 @@ public class WorkerNode {
         writer = new PrintWriter(socket.getOutputStream(), true);
 
         registerWithMaster();
-        
+
         heartbeatScheduler.scheduleAtFixedRate(this::sendHeartbeat, 0, 3, TimeUnit.SECONDS);
-        
+
         listenForMessages();
     }
 
@@ -68,7 +68,7 @@ public class WorkerNode {
         data.put("port", socket.getLocalPort());
         data.put("cores", cores);
         data.put("memory", Runtime.getRuntime().maxMemory() / (1024 * 1024));
-        
+
         Message registerMsg = new Message(MessageType.REGISTER_WORKER, workerId, "master", data);
         writer.println(gson.toJson(registerMsg));
         logger.info("Registered with master node");
@@ -85,8 +85,9 @@ public class WorkerNode {
         try {
             while (running) {
                 String messageStr = reader.readLine();
-                if (messageStr == null) break;
-                
+                if (messageStr == null)
+                    break;
+
                 Message message = gson.fromJson(messageStr, Message.class);
                 handleMessage(message);
             }
@@ -120,11 +121,12 @@ public class WorkerNode {
         String arrayId = (String) data.get("arrayId");
         String dataType = (String) data.get("dataType");
         Boolean primary = (Boolean) data.get("isPrimary");
-        if (primary == null) primary = true; // Default to primary for backwards compatibility
-        
+        if (primary == null)
+            primary = true; // Default to primary for backwards compatibility
+
         String segmentKey = arrayId + "_" + data.get("segmentId");
         isPrimary.put(segmentKey, primary);
-        
+
         if (dataType.equals("int")) {
             List<Double> values = (List<Double>) data.get("data");
             int[] segment = values.stream().mapToInt(Double::intValue).toArray();
@@ -133,41 +135,44 @@ public class WorkerNode {
                 logger.info("Received PRIMARY int array segment: " + arrayId + " with " + segment.length + " elements");
             } else {
                 intReplicas.put(segmentKey, segment);
-                logger.info("Received REPLICA int array segment: " + segmentKey + " with " + segment.length + " elements");
+                logger.info(
+                        "Received REPLICA int array segment: " + segmentKey + " with " + segment.length + " elements");
             }
         } else if (dataType.equals("double")) {
             List<Double> values = (List<Double>) data.get("data");
             double[] segment = values.stream().mapToDouble(Double::doubleValue).toArray();
             if (primary) {
                 doubleSegments.put(arrayId, segment);
-                logger.info("Received PRIMARY double array segment: " + arrayId + " with " + segment.length + " elements");
+                logger.info(
+                        "Received PRIMARY double array segment: " + arrayId + " with " + segment.length + " elements");
             } else {
                 doubleReplicas.put(segmentKey, segment);
-                logger.info("Received REPLICA double array segment: " + segmentKey + " with " + segment.length + " elements");
+                logger.info("Received REPLICA double array segment: " + segmentKey + " with " + segment.length
+                        + " elements");
             }
         }
     }
-    
+
     private void handleReplicateData(Message message) {
         // Same logic as distribute but always stored as replica
         Map<String, Object> data = message.getData();
         data.put("isPrimary", false);
         handleDistributeArray(message);
     }
-    
+
     private void handleRecoverData(Message message) {
         Map<String, Object> data = message.getData();
         String arrayId = (String) data.get("arrayId");
         Integer segmentId = ((Double) data.get("segmentId")).intValue();
         Boolean makePrimary = (Boolean) data.get("makePrimary");
-        
+
         String segmentKey = arrayId + "_" + segmentId;
-        
+
         if (makePrimary != null && makePrimary) {
             // Promote replica to primary
             int[] intReplica = intReplicas.get(segmentKey);
             double[] doubleReplica = doubleReplicas.get(segmentKey);
-            
+
             if (intReplica != null) {
                 intSegments.put(arrayId, intReplica);
                 isPrimary.put(segmentKey, true);
@@ -177,7 +182,7 @@ public class WorkerNode {
                 isPrimary.put(segmentKey, true);
                 logger.info("Promoted double replica to primary for " + segmentKey);
             }
-            
+
             // Send recovery complete message
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("arrayId", arrayId);
@@ -192,7 +197,24 @@ public class WorkerNode {
         Map<String, Object> data = message.getData();
         String arrayId = (String) data.get("arrayId");
         String operation = (String) data.get("operation");
-        
+
+        // We need the segmentId to send it back with the result.
+        // This information isn't currently passed to the worker for processing.
+        // Let's find a primary segment key associated with this worker for this
+        // arrayId.
+        String segmentKey = isPrimary.entrySet().stream()
+                .filter(entry -> entry.getValue() && entry.getKey().startsWith(arrayId + "_"))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+
+        if (segmentKey == null) {
+            logger.warning("No primary segment found for array " + arrayId + " on this worker. Cannot process.");
+            return;
+        }
+
+        int segmentId = Integer.parseInt(segmentKey.split("_")[1]);
+
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             if (operation.equals("example1")) {
                 processExample1(arrayId);
@@ -200,11 +222,20 @@ public class WorkerNode {
                 processExample2(arrayId);
             }
         }, threadPool);
-        
+
         future.thenRun(() -> {
             Map<String, Object> resultData = new HashMap<>();
             resultData.put("arrayId", arrayId);
             resultData.put("status", "completed");
+            resultData.put("segmentId", segmentId);
+
+            String resultKey = arrayId + "_result";
+            if (intSegments.containsKey(resultKey)) {
+                resultData.put("data", intSegments.get(resultKey));
+            } else if (doubleSegments.containsKey(resultKey)) {
+                resultData.put("data", doubleSegments.get(resultKey));
+            }
+
             Message resultMsg = new Message(MessageType.SEGMENT_RESULT, workerId, "master", resultData);
             writer.println(gson.toJson(resultMsg));
         });
@@ -212,16 +243,17 @@ public class WorkerNode {
 
     private void processExample1(String arrayId) {
         double[] segment = doubleSegments.get(arrayId);
-        if (segment == null) return;
-        
+        if (segment == null)
+            return;
+
         int numThreads = Math.min(cores, segment.length);
         int chunkSize = segment.length / numThreads;
         List<Future<double[]>> futures = new ArrayList<>();
-        
+
         for (int i = 0; i < numThreads; i++) {
             final int start = i * chunkSize;
             final int end = (i == numThreads - 1) ? segment.length : (i + 1) * chunkSize;
-            
+
             Future<double[]> future = threadPool.submit(() -> {
                 double[] result = new double[end - start];
                 for (int j = start; j < end; j++) {
@@ -230,10 +262,10 @@ public class WorkerNode {
                 }
                 return result;
             });
-            
+
             futures.add(future);
         }
-        
+
         try {
             double[] result = new double[segment.length];
             int index = 0;
@@ -251,16 +283,19 @@ public class WorkerNode {
 
     private void processExample2(String arrayId) {
         int[] segment = intSegments.get(arrayId);
-        if (segment == null) return;
-        
+        if (segment == null) {
+            logger.warning("No int segment found for arrayId: " + arrayId);
+            return;
+        }
+
         int numThreads = Math.min(cores, segment.length);
         int chunkSize = segment.length / numThreads;
         List<Future<int[]>> futures = new ArrayList<>();
-        
+
         for (int i = 0; i < numThreads; i++) {
             final int start = i * chunkSize;
             final int end = (i == numThreads - 1) ? segment.length : (i + 1) * chunkSize;
-            
+
             Future<int[]> future = threadPool.submit(() -> {
                 int[] result = new int[end - start];
                 for (int j = start; j < end; j++) {
@@ -273,10 +308,10 @@ public class WorkerNode {
                 }
                 return result;
             });
-            
+
             futures.add(future);
         }
-        
+
         try {
             int[] result = new int[segment.length];
             int index = 0;
@@ -297,7 +332,8 @@ public class WorkerNode {
         heartbeatScheduler.shutdown();
         threadPool.shutdown();
         try {
-            if (socket != null) socket.close();
+            if (socket != null)
+                socket.close();
         } catch (IOException e) {
             logger.severe("Error during shutdown: " + e.getMessage());
         }
@@ -308,19 +344,19 @@ public class WorkerNode {
             System.out.println("Usage: WorkerNode <workerId> <masterHost> <masterPort>");
             return;
         }
-        
+
         String workerId = args[0];
         String masterHost = args[1];
         int masterPort = Integer.parseInt(args[2]);
-        
+
         WorkerNode worker = new WorkerNode(workerId, masterHost, masterPort);
-        
+
         try {
             worker.start();
             System.out.println("Worker " + workerId + " connected to master at " + masterHost + ":" + masterPort);
-            
+
             Runtime.getRuntime().addShutdownHook(new Thread(worker::shutdown));
-            
+
             Thread.currentThread().join();
         } catch (Exception e) {
             e.printStackTrace();

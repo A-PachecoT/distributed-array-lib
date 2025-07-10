@@ -1,0 +1,18 @@
+Jul 10, 2025 11:53:27 AM worker.WorkerNode registerWithMaster
+INFO: Registered with master node
+Jul 10, 2025 12:06:55 PM worker.WorkerNode registerWithMaster
+INFO: Registered with master node
+Jul 10, 2025 12:06:59 PM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY double array segment: interop-test-array with 3 elements
+Jul 10, 2025 12:06:59 PM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA double array segment: interop-test-array_3.0 with 3 elements
+Jul 10, 2025 12:07:01 PM worker.WorkerNode processExample1
+INFO: Completed Example 1 processing for interop-test-array
+Jul 10, 2025 12:11:43 PM worker.WorkerNode registerWithMaster
+INFO: Registered with master node
+Jul 10, 2025 12:11:47 PM worker.WorkerNode handleDistributeArray
+INFO: Received PRIMARY double array segment: interop-test-array with 3 elements
+Jul 10, 2025 12:11:47 PM worker.WorkerNode handleDistributeArray
+INFO: Received REPLICA double array segment: interop-test-array_3.0 with 3 elements
+Jul 10, 2025 12:11:49 PM worker.WorkerNode processExample1
+INFO: Completed Example 1 processing for interop-test-array

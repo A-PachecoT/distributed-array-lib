@@ -51,62 +51,62 @@
 
 \newcommand{\hrefcol}[2]{\textcolor{cyan}{\href{#1}{#2}}}
 
-\title{Librería Distribuida para Arrays}
-\subtitle{Procesamiento Concurrente y Distribuido}
-\course{CC4P1 Programación Concurrente y Distribuida}
+\title{Distributed Array Library}
+\subtitle{Concurrent and Distributed Processing}
+\course{CC4P1 Concurrent and Distributed Programming}
 \author{André Pacheco, Arbues Perez, Sergio Pezo}
-\date{Julio 2025}
+\date{July 2025}
 
 \begin{document}
 \maketitle
 
-% Índice
+% Index
 \begin{frame}
 \frametitle{Agenda}
 \begin{itemize}
-    \item Objetivo del Proyecto
-    \item Arquitectura y Diseño
-    \item Implementación
-    \item Protocolo de Comunicación
-    \item Ejemplos de Operaciones
-    \item Replicación y Recuperación
-    \item Tolerancia a Fallos
-    \item Demostración
-    \item Conclusiones
+    \item Project Goal
+    \item Architecture and Design
+    \item Implementation
+    \item Communication Protocol
+    \item Operation Examples
+    \item Replication and Recovery
+    \item Fault Tolerance
+    \item Demonstration
+    \item Conclusions
 \end{itemize}
 \end{frame}
 
-% Objetivo
+% Goal
 \begin{frame}
-\frametitle{Objetivo del Proyecto}
-\begin{block}{Desarrollar una librería distribuida}
+\frametitle{Project Goal}
+\begin{block}{Develop a distributed library}
     \begin{itemize}
-        \item<1-> Arrays distribuidos: \texttt{DArrayInt} y \texttt{DArrayDouble}
-        \item<2-> Procesamiento concurrente y paralelo
-        \item<3-> Comunicación por sockets TCP nativos
-        \item<4-> Sin frameworks externos
-        \item<5-> Tolerancia a fallos básica
+        \item<1-> Distributed arrays: \texttt{DArrayInt} and \texttt{DArrayDouble}
+        \item<2-> Concurrent and parallel processing
+        \item<3-> Communication via native TCP sockets
+        \item<4-> No external frameworks
+        \item<5-> Basic fault tolerance
     \end{itemize}
 \end{block}
 
 \onslide<6->{
-\begin{block}{Implementaciones}
+\begin{block}{Implementations}
     \begin{itemize}
         \item Java 8+
         \item Python 3.6+
-        \item TypeScript (Cliente)
+        \item TypeScript (Client)
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Arquitectura
+% Architecture
 \begin{frame}
-\frametitle{Arquitectura del Sistema}
+\frametitle{System Architecture}
 \begin{center}
 \begin{tikzpicture}[scale=0.7, transform shape]
     % Master node
-    \node[master] (master) at (0,2) {Nodo Maestro};
+    \node[master] (master) at (0,2) {Master Node};
     
     % Worker nodes
     \visible<2->{
@@ -117,7 +117,7 @@
     
     % Client
     \visible<3->{
-    \node[client] (client) at (0,3.8) {Cliente};
+    \node[client] (client) at (0,3.8) {Client};
     }
     
     % Connections
@@ -133,28 +133,28 @@
     
     % Data distribution
     \visible<4->{
-    \node[data, below=0.3cm of w1] (d1) {\tiny Segmento 0};
-    \node[data, below=0.3cm of w2] (d2) {\tiny Segmento 1};
-    \node[data, below=0.3cm of w3] (d3) {\tiny Segmento 2};
+    \node[data, below=0.3cm of w1] (d1) {\tiny Segment 0};
+    \node[data, below=0.3cm of w2] (d2) {\tiny Segment 1};
+    \node[data, below=0.3cm of w3] (d3) {\tiny Segment 2};
     }
 \end{tikzpicture}
 \end{center}
 
 \vspace{-0.5cm}
 \visible<5->{
-\begin{block}{Características}
+\begin{block}{Features}
     \begin{itemize}
-        \item Arquitectura maestro-trabajador
-        \item Distribución automática de datos
-        \item Comunicación bidireccional
+        \item Master-worker architecture
+        \item Automatic data distribution
+        \item Bidirectional communication
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Implementación - Clases principales
+% Implementation - Main classes
 \begin{frame}
-\frametitle{Implementación - Estructura}
+\frametitle{Implementation - Structure}
 \begin{columns}
 \column{0.5\textwidth}
 \begin{block}{Java}
@@ -182,15 +182,15 @@
 \end{columns}
 \end{frame}
 
-% Segmentación de Arrays
+% Array Segmentation
 \begin{frame}
-\frametitle{Segmentación de Arrays}
+\frametitle{Array Segmentation}
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
     % Original array
     \visible<1->{
     \draw[thick] (0,3.8) rectangle (8,4.8);
-    \node at (4,4.3) {Array Original (10,000 elementos)};
+    \node at (4,4.3) {Original Array (10,000 elements)};
     }
     
     % Segmentation arrows
@@ -230,20 +230,20 @@
 
 \vspace{-0.3cm}
 \visible<5->{
-\begin{block}{Algoritmo de Segmentación}
+\begin{block}{Segmentation Algorithm}
     \begin{itemize}
-        \item División equitativa: $\frac{\text{total}}{\text{workers}}$
-        \item Manejo de residuo distribuido
-        \item Asignación round-robin
+        \item Equal division: $\frac{\text{total}}{\text{workers}}$
+        \item Distributed remainder handling
+        \item Round-robin assignment
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Protocolo de Comunicación
+% Communication Protocol
 \begin{frame}[fragile]
-\frametitle{Protocolo de Comunicación}
-\begin{block}{Formato JSON}
+\frametitle{Communication Protocol}
+\begin{block}{JSON Format}
 \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 {
   type: MESSAGE_TYPE,
@@ -258,24 +258,24 @@
 
 \vspace{-0.3cm}
 \visible<2->{
-\begin{block}{Tipos de Mensajes}
+\begin{block}{Message Types}
     \begin{itemize}
         \small
         \setlength\itemsep{-0.1em}
-        \item<2-> \texttt{REGISTER\_WORKER} - Registro de trabajador
-        \item<3-> \texttt{DISTRIBUTE\_ARRAY} - Distribución de segmentos
-        \item<4-> \texttt{PROCESS\_SEGMENT} - Orden de procesamiento
-        \item<5-> \texttt{HEARTBEAT} - Verificación de salud
-        \item<6-> \texttt{REPLICATE\_DATA} - Replicación de segmento
-        \item<7-> \texttt{RECOVER\_DATA} - Recuperación de fallo
+        \item<2-> \texttt{REGISTER\_WORKER} - Worker registration
+        \item<3-> \texttt{DISTRIBUTE\_ARRAY} - Segment distribution
+        \item<4-> \texttt{PROCESS\_SEGMENT} - Processing order
+        \item<5-> \texttt{HEARTBEAT} - Health check
+        \item<6-> \texttt{REPLICATE\_DATA} - Segment replication
+        \item<7-> \texttt{RECOVER\_DATA} - Failure recovery
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Procesamiento Paralelo
+% Parallel Processing
 \begin{frame}
-\frametitle{Procesamiento Paralelo}
+\frametitle{Parallel Processing}
 \begin{center}
 \begin{tikzpicture}[scale=0.8]
     % Worker node
@@ -315,83 +315,83 @@
 
 \vspace{-0.3cm}
 \visible<5->{
-\begin{block}{Estrategia}
+\begin{block}{Strategy}
     \begin{itemize}
         \small
         \setlength\itemsep{-0.1em}
-        \item Detección automática de núcleos: \texttt{Runtime.availableProcessors()}
-        \item División del segmento en chunks
-        \item Procesamiento concurrente con ThreadPool
-        \item Sincronización mediante \texttt{Future<T>}
+        \item Automatic core detection: \texttt{Runtime.availableProcessors()}
+        \item Division of the segment into chunks
+        \item Concurrent processing with ThreadPool
+        \item Synchronization using \texttt{Future<T>}
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Ejemplo 1 - Operaciones Matemáticas
+% Example 1 - Mathematical Operations
 \begin{frame}
-\frametitle{Ejemplo 1: Operaciones Matemáticas}
-\begin{block}{Fórmula}
-$$\text{resultado} = \frac{(\sin(x) + \cos(x))^2}{\sqrt{|x|} + 1}$$
+\frametitle{Example 1: Mathematical Operations}
+\begin{block}{Formula}
+$$\text{result} = \frac{(\sin(x) + \cos(x))^2}{\sqrt{|x|} + 1}$$
 \end{block}
 
 \visible<2->{
-\begin{block}{Implementación Java}
+\begin{block}{Java Implementation}
     \begin{itemize}
-        \item Procesamiento paralelo con ThreadPool
-        \item División del segmento en chunks
-        \item Cada thread procesa su chunk independientemente
+        \item Parallel processing with ThreadPool
+        \item Division of the segment into chunks
+        \item Each thread processes its chunk independently
     \end{itemize}
 \end{block}
 }
 
 \visible<3->{
-\begin{block}{Implementación Python}
+\begin{block}{Python Implementation}
     \begin{itemize}
-        \item Uso de ThreadPoolExecutor
-        \item NumPy para operaciones vectorizadas
-        \item Procesamiento concurrente por chunks
+        \item Use of ThreadPoolExecutor
+        \item NumPy for vectorized operations
+        \item Concurrent processing by chunks
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Ejemplo 2 - Evaluación Condicional
+% Example 2 - Conditional Evaluation
 \begin{frame}
-\frametitle{Ejemplo 2: Evaluación Condicional}
-\begin{block}{Condición}
-Si $x \bmod 3 = 0$ o $500 \leq x \leq 1000$:
-$$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
+\frametitle{Example 2: Conditional Evaluation}
+\begin{block}{Condition}
+If $x \bmod 3 = 0$ or $500 \leq x \leq 1000$:
+$$\text{result} = (x \cdot \log(x)) \bmod 7$$
 \end{block}
 
 \visible<2->{
-\begin{block}{Procesamiento}
+\begin{block}{Processing}
     \begin{itemize}
-        \item Evaluación condicional para cada elemento
-        \item Aplicación de transformación logarítmica
-        \item Preservación de valores que no cumplen condición
+        \item Conditional evaluation for each element
+        \item Application of logarithmic transformation
+        \item Preservation of values that do not meet the condition
     \end{itemize}
 \end{block}
 }
 
 \visible<3->{
-\begin{block}{Resiliencia}
+\begin{block}{Resilience}
     \begin{itemize}
-        \item Manejo de excepciones por thread
-        \item Continuación ante fallos parciales
-        \item Consolidación de resultados válidos
+        \item Exception handling per thread
+        \item Continuation in case of partial failures
+        \item Consolidation of valid results
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Replicación y Recuperación
+% Replication and Recovery
 \begin{frame}
-\frametitle{Replicación de Datos}
+\frametitle{Data Replication}
 \begin{center}
 \begin{tikzpicture}[scale=0.7]
     % Master
-    \node[master] (master) at (0,3.5) {Nodo Maestro};
+    \node[master] (master) at (0,3.5) {Master Node};
     
     % Workers
     \node[worker] (w1) at (-4,1) {Worker 0};
@@ -428,69 +428,69 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
     }
     
     \visible<5->{
-    \node[below=3.5cm of master, text width=8cm] {\small Factor de replicación = 2 (primario + 1 réplica)};
+    \node[below=3.5cm of master, text width=8cm] {\small Replication factor = 2 (primary + 1 replica)};
     }
 \end{tikzpicture}
 \end{center}
 \end{frame}
 
-% Mecanismo de Recuperación
+% Recovery Mechanism
 \begin{frame}
-\frametitle{Mecanismo de Recuperación}
+\frametitle{Recovery Mechanism}
 \begin{columns}
 \column{0.5\textwidth}
-\begin{block}{Detección de Fallos}
+\begin{block}{Failure Detection}
     \begin{enumerate}
         \item<1-> Heartbeat timeout (10s)
-        \item<2-> Worker marcado como caído
-        \item<3-> Activar proceso de recuperación
+        \item<2-> Worker marked as down
+        \item<3-> Activate recovery process
     \end{enumerate}
 \end{block}
 
 \visible<4->{
-\begin{block}{Promoción de Réplicas}
+\begin{block}{Replica Promotion}
     \begin{enumerate}
-        \item Identificar segmentos afectados
-        \item Promover réplicas a primarias
-        \item Actualizar mapeos de segmentos
+        \item Identify affected segments
+        \item Promote replicas to primary
+        \item Update segment mappings
     \end{enumerate}
 \end{block}
 }
 
 \column{0.5\textwidth}
 \visible<5->{
-\begin{block}{Creación de Nuevas Réplicas}
+\begin{block}{New Replica Creation}
     \begin{enumerate}
-        \item Seleccionar workers disponibles
-        \item Replicar datos desde primario
-        \item Mantener factor de replicación
+        \item Select available workers
+        \item Replicate data from primary
+        \item Maintain replication factor
     \end{enumerate}
 \end{block}
 }
 
 \visible<6->{
-\begin{block}{Redistribución}
+\begin{block}{Redistribution}
     \begin{enumerate}
-        \item Balancear carga entre workers
-        \item Evitar sobrecarga de nodos
-        \item Optimizar uso de recursos
-    \end{enumerate}
+        \item Balance load among workers
+        \item Avoid node overload
+        \item Optimize resource usage
+    \end{itemize}
 \end{block}
 }
 \end{columns}
 \end{frame}
 
-% Ejemplo 3 - Simulación de Fallos
+% Example 3 - Failure Simulation
 \begin{frame}
-\frametitle{Ejemplo 3: Recuperación ante Fallos}
+\frametitle{Example 3: Fault Recovery}
 \begin{center}
 \begin{tikzpicture}[scale=0.65]
     % Timeline
-    \draw[arrow] (0,0) -- (10,0) node[right] {Tiempo};
+    \draw[arrow] (0,0) -- (10,0) node[right] {Time};
     
     % States
     \visible<1->{
-    \node[above] at (1,0.2) {Estado Inicial};
+    \node[above] at (1,0.2) {Initial State};
     \node[worker, scale=0.6] at (1,1) {W0};
     \node[worker, scale=0.6] at (1,1.8) {W1};
     \node[worker, scale=0.6] at (1,2.6) {W2};
@@ -498,25 +498,25 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
     
     \visible<2->{
     \draw[timeline] (3,-0.5) -- (3,3.5);
-    \node[above] at (3,0.2) {Fallo W1};
+    \node[above] at (3,0.2) {W1 Failure};
     \node[worker, scale=0.6, fill=red!40] at (3,1.8) {W1};
     }
     
     \visible<3->{
     \draw[timeline] (5,-0.5) -- (5,3.5);
-    \node[above] at (5,0.2) {Detección};
+    \node[above] at (5,0.2) {Detection};
     \node[draw, fill=orange!20, rounded corners, scale=0.6] at (5,3) {Timeout 10s};
     }
     
     \visible<4->{
     \draw[timeline] (7,-0.5) -- (7,3.5);
-    \node[above] at (7,0.2) {Recuperación};
-    \draw[arrow, green] (7,2.4) -- (7,1.2) node[midway, right] {\tiny Promover};
+    \node[above] at (7,0.2) {Recovery};
+    \draw[arrow, green] (7,2.4) -- (7,1.2) node[midway, right] {\tiny Promote};
     }
     
     \visible<5->{
     \draw[timeline] (9,-0.5) -- (9,3.5);
-    \node[above] at (9,0.2) {Estado Final};
+    \node[above] at (9,0.2) {Final State};
     \node[worker, scale=0.6, fill=green!40] at (9,1) {W0+};
     \node[worker, scale=0.6, fill=green!40] at (9,2.6) {W2+};
     }
@@ -525,11 +525,11 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
 
 \vspace{0.5cm}
 \visible<6->{
-\begin{block}{Proceso Automático}
+\begin{block}{Automatic Process}
     \begin{itemize}
-        \item Sin pérdida de datos
-        \item Continuidad del servicio
-        \item Transparente para el cliente
+        \item No data loss
+        \item Service continuity
+        \item Transparent to the client
     \end{itemize}
 \end{block}
 }
@@ -537,7 +537,7 @@ $$\text{resultado} = (x \cdot \log(x)) \bmod 7$$
 
 % Terminal output for recovery demo
 \begin{frame}[fragile]
-\frametitle{Demostración - Recuperación Automática}
+\frametitle{Demonstration - Automatic Recovery}
 \begin{lstlisting}[style=terminal]
 $ ./test-recovery.sh
 === Distributed Array Recovery Test ===
@@ -568,13 +568,13 @@ Operations completed successfully after recovery!
 \end{lstlisting}
 \end{frame}
 
-% Tolerancia a Fallos
+% Fault Tolerance
 \begin{frame}
-\frametitle{Tolerancia a Fallos}
+\frametitle{Fault Tolerance}
 \begin{center}
 \begin{tikzpicture}[scale=0.75]
     % Master node
-    \node[master] (master) at (0,3) {Nodo Maestro};
+    \node[master] (master) at (0,3) {Master Node};
     
     % Workers
     \visible<1->{
@@ -591,13 +591,13 @@ Operations completed successfully after recovery!
     % Heartbeat signals
     \visible<2->{
     \draw[arrow, blue, thick, <->] (master.south) -- (w2.north) node[midway, right] {\small Heartbeat};
-    \node[below=0.3cm of w2] {\tiny cada 3s};
+    \node[below=0.3cm of w2] {\tiny every 3s};
     }
     
     % Worker failure
     \visible<3->{
     \node[worker, fill=red!40, draw=red] (w2fail) at (0,0) {Worker 1};
-    \node[below=0.5cm of w2fail, red] {\small $\times$ Sin respuesta};
+    \node[below=0.5cm of w2fail, red] {\small $\times$ No response};
     }
     
     % Detection
@@ -608,28 +608,28 @@ Operations completed successfully after recovery!
     
     % Redistribution
     \visible<5->{
-    \draw[arrow, green!60!black, thick, bend left=20] (master) to node[above, sloped] {\tiny redistribuir} (w1);
-    \draw[arrow, green!60!black, thick, bend right=20] (master) to node[above, sloped] {\tiny redistribuir} (w3);
+    \draw[arrow, green!60!black, thick, bend left=20] (master) to node[above, sloped] {\tiny redistribute} (w1);
+    \draw[arrow, green!60!black, thick, bend right=20] (master) to node[above, sloped] {\tiny redistribute} (w3);
     }
 \end{tikzpicture}
 \end{center}
 
 \visible<6->{
-\begin{block}{Sistema de Tolerancia a Fallos}
+\begin{block}{Fault Tolerance System}
     \begin{itemize}
-        \item Heartbeat: verificación cada 3 segundos
-        \item Detección: timeout de 10 segundos
-        \item Replicación: factor 2 (primario + réplica)
-        \item Recuperación: promoción automática de réplicas
-        \item Redistribución: creación de nuevas réplicas
+        \item Heartbeat: check every 3 seconds
+        \item Detection: 10-second timeout
+        \item Replication: factor 2 (primary + replica)
+        \item Recovery: automatic promotion of replicas
+        \item Redistribution: creation of new replicas
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Demostración - Terminal Output
+% Demonstration - Terminal Output
 \begin{frame}[fragile]
-\frametitle{Demostración - Inicio del Cluster}
+\frametitle{Demonstration - Cluster Start}
 \begin{lstlisting}[style=terminal]
 $ ./start-java-cluster.sh
 Starting Java distributed array cluster...
@@ -648,21 +648,21 @@ Master node running on port 5000
 \end{lstlisting}
 \end{frame}
 
-% Cliente TypeScript
+% TypeScript Client
 \begin{frame}[fragile]
-\frametitle{Cliente TypeScript}
-\begin{block}{Características}
+\frametitle{TypeScript Client}
+\begin{block}{Features}
     \begin{itemize}
-        \item<1-> Cliente completo en TypeScript/Node.js
-        \item<2-> Compatible con clusters Java y Python
-        \item<3-> Interfaz CLI idéntica
-        \item<4-> Comunicación asíncrona con Promises
-        \item<5-> Tipado fuerte con interfaces
+        \item<1-> Full client in TypeScript/Node.js
+        \item<2-> Compatible with Java and Python clusters
+        \item<3-> Identical CLI interface
+        \item<4-> Asynchronous communication with Promises
+        \item<5-> Strong typing with interfaces
     \end{itemize}
 \end{block}
 
 \visible<6->{
-\begin{block}{Ejemplo de uso}
+\begin{block}{Usage Example}
 \footnotesize
 \texttt{\$ npm start -- localhost 5000}\\
 \texttt{Connected to master at localhost:5000}\\
@@ -675,9 +675,9 @@ Master node running on port 5000
 }
 \end{frame}
 
-% Cliente Interactivo
+% Interactive Client
 \begin{frame}[fragile]
-\frametitle{Demostración - Cliente Interactivo}
+\frametitle{Demonstration - Interactive Client}
 \begin{lstlisting}[style=terminal]
 $ java -cp out:lib/* client.DistributedArrayClient localhost 5000
 Connected to master at localhost:5000
@@ -696,9 +696,9 @@ Get result response: {type:OPERATION_COMPLETE,
 \end{lstlisting}
 \end{frame}
 
-% Logs del Sistema
+% System Logs
 \begin{frame}[fragile]
-\frametitle{Logs del Sistema}
+\frametitle{System Logs}
 \begin{lstlisting}[style=terminal]
 master.log
 INFO: Master node started on port 5000
@@ -718,32 +718,32 @@ INFO: Sent result to master
 \end{lstlisting}
 \end{frame}
 
-% Rendimiento
+% Performance
 \begin{frame}
-\frametitle{Rendimiento y Escalabilidad}
+\frametitle{Performance and Scalability}
 \begin{columns}
 \column{0.5\textwidth}
-\begin{block}{Paralelización}
+\begin{block}{Parallelization}
     \begin{itemize}
-        \item<1-> Uso de todos los núcleos
-        \item<2-> ThreadPool eficiente
-        \item<3-> División automática de trabajo
+        \item<1-> Use of all cores
+        \item<2-> Efficient ThreadPool
+        \item<3-> Automatic work division
     \end{itemize}
 \end{block}
 
 \visible<4->{
-\begin{block}{Distribución}
+\begin{block}{Distribution}
     \begin{itemize}
-        \item Segmentación equitativa
-        \item Comunicación asíncrona
-        \item Procesamiento independiente
+        \item Equal segmentation
+        \item Asynchronous communication
+        \item Independent processing
     \end{itemize}
 \end{block}
 }
 
 \column{0.5\textwidth}
 \visible<5->{
-\begin{block}{Métricas (10,000 elementos)}
+\begin{block}{Metrics (10,000 elements)}
     \begin{itemize}
         \item 1 worker: 250ms
         \item 2 workers: 140ms
@@ -758,7 +758,7 @@ INFO: Sent result to master
 \begin{center}
 \begin{tikzpicture}[scale=0.6]
     \draw[->] (0,0) -- (5,0) node[right] {Workers};
-    \draw[->] (0,0) -- (0,4) node[above] {Tiempo (ms)};
+    \draw[->] (0,0) -- (0,4) node[above] {Time (ms)};
     
     \draw[thick, blue] (1,3.5) -- (2,2) -- (3,1.3) -- (4,1);
     
@@ -770,47 +770,47 @@ INFO: Sent result to master
 }
 \end{frame}
 
-% Conclusiones
+% Conclusions
 \begin{frame}
-\frametitle{Conclusiones}
-\begin{block}{Logros}
+\frametitle{Conclusions}
+\begin{block}{Achievements}
     \begin{itemize}
-        \item<1-> Librería funcional en Java, Python y TypeScript
-        \item<2-> Procesamiento verdaderamente distribuido
-        \item<3-> Paralelización efectiva por nodo
-        \item<4-> Sistema completo de replicación y recuperación
-        \item<5-> Sin dependencias de frameworks externos
-        \item<6-> Interoperabilidad entre lenguajes
+        \item<1-> Functional library in Java, Python, and TypeScript
+        \item<2-> Truly distributed processing
+        \item<3-> Effective parallelization per node
+        \item<4-> Complete replication and recovery system
+        \item<5-> No external framework dependencies
+        \item<6-> Interoperability between languages
     \end{itemize}
 \end{block}
 
 \visible<6->{
-\begin{block}{Aplicaciones}
+\begin{block}{Applications}
     \begin{itemize}
-        \item Procesamiento de grandes conjuntos de datos
-        \item Cálculos científicos distribuidos
-        \item Análisis de datos en paralelo
+        \item Large dataset processing
+        \item Distributed scientific calculations
+        \item Parallel data analysis
     \end{itemize}
 \end{block}
 }
 
 \visible<7->{
-\begin{block}{Características Avanzadas Implementadas}
+\begin{block}{Advanced Implemented Features}
     \begin{itemize}
-        \item Replicación automática de segmentos
-        \item Recuperación transparente ante fallos
-        \item Mantenimiento del factor de replicación
-        \item Redistribución dinámica de datos
+        \item Automatic segment replication
+        \item Transparent fault recovery
+        \item Replication factor maintenance
+        \item Dynamic data redistribution
     \end{itemize}
 \end{block}
 }
 \end{frame}
 
-% Preguntas
+% Questions
 \begin{frame}
-\frametitle{Preguntas}
+\frametitle{Questions}
 \begin{center}
-\Large{Gracias por su atención}
+\Large{Thank you for your attention}
 
 \vspace{1cm}
 
