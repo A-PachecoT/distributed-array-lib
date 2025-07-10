@@ -1,6 +1,11 @@
 # Fdb version 4
+<<<<<<< HEAD
 ["pdflatex"] 1752171698.61803 "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" "presentacion_array_distribuido.pdf" "presentacion_array_distribuido" 1752171703.20177 2
   "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" 1752168549.15207 22939 5c36157b08840033771b0ce8ee90a7ad ""
+=======
+["pdflatex"] 1752173644.18614 "/home/andre/uni/25-1/concurrente/final/presentacion_array_distribuido.tex" "presentacion_array_distribuido.pdf" "presentacion_array_distribuido" 1752173649.53658 0
+  "/home/andre/uni/25-1/concurrente/final/presentacion_array_distribuido.tex" 1752173644.00654 24958 3a5127987d9b36264a0d2ec998b1a432 ""
+>>>>>>> 6187803 (fix graphs on pdf)
   "/usr/share/texmf-dist/fonts/enc/dvips/caladea/cld_prieif.enc" 1742685315 2909 0d9a00ce3f1df725b182b15dd24bf4a5 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/carlito/crlt_j4hweq.enc" 1742685315 3199 785d1f4f03ee0bb70108af8679871db0 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/carlito/crlt_zisnlb.enc" 1742685315 3105 fe84215d6e1e68b95a7d9a8041ee418c ""
@@ -24,9 +29,11 @@
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm" 1742685315 940 228d6584342e91276bf566bcf9716b83 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmex10.tfm" 1742685315 992 662f679a0b3d2d53c1b94050fdaa3f50 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm" 1742685315 1528 abec98dbc43e172678c11b3b9031252a ""
+  "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1742685315 1524 4414a8315f39513458b80dfc63bff03a ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm" 1742685315 1512 f21f83efb36853c0b70002322c1ab3ad ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi8.tfm" 1742685315 1520 eccf95517727cb11801f4f1aee3a21b4 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1742685315 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
+  "/usr/share/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1742685315 1288 655e228510b4c2a1abe905c368440826 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmr6.tfm" 1742685315 1300 b62933e007d01cfd073f79b963c01526 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmr8.tfm" 1742685315 1292 21c1c5bfeaebccffdb478fd231a0997d ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmss10.tfm" 1742685315 1316 b636689f1933f24d1294acdf6041daaa ""
@@ -47,6 +54,7 @@
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb" 1742685315 31099 c85edf1dd5b9e826d67c9c7293b6786c ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb" 1742685315 29078 718ea4567ceff944262b0f5b0800e1d9 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb" 1742685315 10594 310261a6407d360eda1ed257d05cd4df ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb" 1742685315 31764 459c573c03a4949a528c2cc7f557e217 ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb" 1742685315 170827 2e4b634de7b58578eae1dc93e51dfe48 ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb" 1742685315 169201 9ebf99020dde51a5086e186761a34e8f ""
   "/usr/share/texmf-dist/fonts/vf/google/carlito/Crlt-osf-ts1.vf" 1742685315 560 b8ff2d578456e8464ab77f7464fdc9dc ""
@@ -260,6 +268,7 @@
   "/usr/share/texmf-dist/tex/latex/xcolor/xcolor.sty" 1742685315 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "/usr/share/texmf-dist/tex/latex/xkeyval/xkeyval.sty" 1742685315 4937 4ce600ce9bd4ec84d0250eb6892fcf4f ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
+<<<<<<< HEAD
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752123477 5311557 9da84c45f5b388655502706482323571 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1752123434 2030637 c94fb9ed8ceb01117b4e3ff3172949a4 ""
   "assets/Uni-logo_transparente_granate.png" 1752097206.3795 380921 93218426419f855600d23c79b411e8f0 ""
@@ -270,6 +279,18 @@
   "presentacion_array_distribuido.tex" 1752168549.15207 22939 5c36157b08840033771b0ce8ee90a7ad ""
   "presentacion_array_distribuido.vrb" 1752171702.53176 676 1554004e6095aa487d91b064bdafb41b "pdflatex"
   "sintefcolor.sty" 1752097206.3985 989 221bdac9a199f603caea4b6935b2e588 ""
+=======
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1751783117 5308699 bb4da464bb9575413846cbe594b35cd0 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1751783095 2008237 c2b236138382085a20e7e8322630d068 ""
+  "assets/Uni-logo_transparente_granate.png" 1751832310.87708 380921 93218426419f855600d23c79b411e8f0 ""
+  "beamerthemesintef.sty" 1751832310.87359 9592 b5d7fac7750fd65cb83eaf258a11555f ""
+  "presentacion_array_distribuido.aux" 1752173649.43089 3292 6c158271b9a655b7d4392fa499e36c4a "pdflatex"
+  "presentacion_array_distribuido.nav" 1752173649.43158 2247 51dcbc2223a8394985ce943b3ea934ef "pdflatex"
+  "presentacion_array_distribuido.out" 1752173645.84955 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "presentacion_array_distribuido.tex" 1752173644.00654 24958 3a5127987d9b36264a0d2ec998b1a432 ""
+  "presentacion_array_distribuido.vrb" 1752173649.30482 946 dd1d1a71a49a6a8ea255b302dc0363dc "pdflatex"
+  "sintefcolor.sty" 1751832310.87459 989 221bdac9a199f603caea4b6935b2e588 ""
+>>>>>>> 6187803 (fix graphs on pdf)
   (generated)
   "presentacion_array_distribuido.aux"
   "presentacion_array_distribuido.log"

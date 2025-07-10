@@ -474,7 +474,7 @@ $$\text{result} = (x \cdot \log(x)) \bmod 7$$
         \item Balance load among workers
         \item Avoid node overload
         \item Optimize resource usage
-    \end{itemize}
+    \end{enumerate}
 \end{block}
 }
 \end{columns}
@@ -484,52 +484,94 @@ $$\text{result} = (x \cdot \log(x)) \bmod 7$$
 \begin{frame}
 \frametitle{Example 3: Fault Recovery}
 \begin{center}
-\begin{tikzpicture}[scale=0.65]
+\begin{tikzpicture}[scale=0.55]
     % Timeline
-    \draw[arrow] (0,0) -- (10,0) node[right] {Time};
+    \draw[->, thick, gray] (0,0) -- (13.2,0) node[right] {Time};
     
-    % States
+    % Time markers (20% more spacing: 1->1.2, 3.5->4.2, 6->7.2, 8.5->10.2, 11->13.2)
+    \foreach \x/\label in {1.2/T0, 4.2/T1, 7.2/T2, 10.2/T3, 13.2/T4} {
+        \draw[gray] (\x,-0.1) -- (\x,0.1);
+        \node[below, gray] at (\x,-0.2) {\small \label};
+    }
+    
+    % Phase 1: Initial State
     \visible<1->{
-    \node[above] at (1,0.2) {Initial State};
-    \node[worker, scale=0.6] at (1,1) {W0};
-    \node[worker, scale=0.6] at (1,1.8) {W1};
-    \node[worker, scale=0.6] at (1,2.6) {W2};
+    \node[above, font=\small\bfseries] at (1.2,5.8) {Initial State};
+    \node[worker, scale=0.5] (w0-1) at (1.2,2) {Worker 0};
+    \node[worker, scale=0.5] (w1-1) at (1.2,3.2) {Worker 1};
+    \node[worker, scale=0.5] (w2-1) at (1.2,4.4) {Worker 2};
+    
+    % Show data segments
+    \node[data, scale=0.5, right=0.1cm of w0-1] {Seg 0};
+    \node[data, scale=0.5, right=0.1cm of w1-1] {Seg 1};
+    \node[data, scale=0.5, right=0.1cm of w2-1] {Seg 2};
     }
     
+    % Phase 2: Failure
     \visible<2->{
-    \draw[timeline] (3,-0.5) -- (3,3.5);
-    \node[above] at (3,0.2) {W1 Failure};
-    \node[worker, scale=0.6, fill=red!40] at (3,1.8) {W1};
+    \draw[dashed, gray] (4.2,0) -- (4.2,6.5);
+    \node[above, font=\small\bfseries, red] at (4.2,5.8) {Failure};
+    \node[worker, scale=0.5, fill=red!40, draw=red] (w1-fail) at (4.2,3.2) {Worker 1};
+    \node[red, font=\large] at (4.2,3.2) {$\times$};
+    
+    % Other workers continue
+    \node[worker, scale=0.5] at (4.2,2) {Worker 0};
+    \node[worker, scale=0.5] at (4.2,4.4) {Worker 2};
     }
     
+    % Phase 3: Detection
     \visible<3->{
-    \draw[timeline] (5,-0.5) -- (5,3.5);
-    \node[above] at (5,0.2) {Detection};
-    \node[draw, fill=orange!20, rounded corners, scale=0.6] at (5,3) {Timeout 10s};
+    \draw[dashed, gray] (7.2,0) -- (7.2,6.5);
+    \node[above, font=\small\bfseries, orange] at (7.2,5.8) {Detection};
+    
+    % Show timeout
+    \node[draw=orange, fill=orange!20, rounded corners, scale=0.55] at (7.2,5) {Heartbeat Timeout (10s)};
+    \draw[arrow, orange, thick] (7.2,4.8) -- (7.2,3.3);
+    
+    % Master detects failure
+    \node[master, scale=0.5] (master) at (7.2,2.8) {Master};
+    \node[below=0.05cm of master, font=\tiny, orange] {Detects failure};
     }
     
+    % Phase 4: Recovery
     \visible<4->{
-    \draw[timeline] (7,-0.5) -- (7,3.5);
-    \node[above] at (7,0.2) {Recovery};
-    \draw[arrow, green] (7,2.4) -- (7,1.2) node[midway, right] {\tiny Promote};
+    \draw[dashed, gray] (10.2,0) -- (10.2,6.5);
+    \node[above, font=\small\bfseries, green!60!black] at (10.2,5.8) {Recovery};
+    
+    % Show replica promotion
+    \node[worker, scale=0.5, fill=green!30] (w0-rec) at (10.2,2) {Worker 0};
+    \node[worker, scale=0.5, fill=green!30] (w2-rec) at (10.2,4.4) {Worker 2};
+    
+    % Show data redistribution
+    \node[data, scale=0.5, fill=blue!20, right=0.1cm of w0-rec] {Seg 1'};
+    \node[data, scale=0.5, right=0.1cm of w2-rec] {Seg 2};
+    
+    % Recovery arrow
+    \draw[arrow, green!60!black, thick] (8.4,3.2) .. controls (9,2.5) .. (9.6,2.2);
+    \node[above, font=\tiny, green!60!black] at (9,2.8) {Promote replica};
     }
     
+    % Phase 5: Final State
     \visible<5->{
-    \draw[timeline] (9,-0.5) -- (9,3.5);
-    \node[above] at (9,0.2) {Final State};
-    \node[worker, scale=0.6, fill=green!40] at (9,1) {W0+};
-    \node[worker, scale=0.6, fill=green!40] at (9,2.6) {W2+};
+    \draw[dashed, gray] (13.2,0) -- (13.2,6.5);
+    \node[above, font=\small\bfseries] at (13.2,5.8) {Operational};
+    
+    \node[worker, scale=0.5, fill=green!40] at (13.2,2) {Worker 0+};
+    \node[worker, scale=0.5, fill=green!40] at (13.2,4.4) {Worker 2+};
+    
+    % Check mark
+    \node[green!60!black, font=\large] at (13.2,3.2) {$\checkmark$};
     }
 \end{tikzpicture}
 \end{center}
 
-\vspace{0.5cm}
+\vspace{0.1cm}
 \visible<6->{
-\begin{block}{Automatic Process}
+\begin{block}{Automatic Recovery Process}
     \begin{itemize}
-        \item No data loss
-        \item Service continuity
-        \item Transparent to the client
+        \item \textbf{No data loss}: Replicas ensure data availability
+        \item \textbf{Service continuity}: Operations continue without interruption
+        \item \textbf{Transparent}: Client unaware of internal recovery
     \end{itemize}
 \end{block}
 }
