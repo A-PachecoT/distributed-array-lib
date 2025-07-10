@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.7.9)  10 JUL 2025 12:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2026/dev/Arch Linux) (preloaded format=pdflatex 2025.7.9)  10 JUL 2025 13:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -797,7 +797,6 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring OFF on input line 60.
- (./presentacion_array_distribuido.out) (./presentacion_array_distribuido.out)
 \@outlinefile=\write5
 \openout5 = `presentacion_array_distribuido.out'.
 
@@ -892,7 +891,7 @@ File: TS1Crlt-OsF.fd 2022/10/05 (autoinst) Font definitions for TS1/Crlt-OsF.
 [8
 
 ]
-Overfull \vbox (8.82079pt too high) detected at line 153
+Overfull \vbox (8.25859pt too high) detected at line 153
  []
 
 
@@ -900,7 +899,7 @@ Overfull \vbox (8.82079pt too high) detected at line 153
 [9
 
 ]
-Overfull \vbox (8.82079pt too high) detected at line 153
+Overfull \vbox (8.25859pt too high) detected at line 153
  []
 
 
@@ -908,7 +907,7 @@ Overfull \vbox (8.82079pt too high) detected at line 153
 [10
 
 ]
-Overfull \vbox (8.82079pt too high) detected at line 153
+Overfull \vbox (8.25859pt too high) detected at line 153
  []
 
 
@@ -916,7 +915,7 @@ Overfull \vbox (8.82079pt too high) detected at line 153
 [11
 
 ]
-Overfull \vbox (8.82079pt too high) detected at line 153
+Overfull \vbox (8.25859pt too high) detected at line 153
  []
 
 
@@ -924,7 +923,7 @@ Overfull \vbox (8.82079pt too high) detected at line 153
 [12
 
 ]
-Overfull \vbox (8.82079pt too high) detected at line 153
+Overfull \vbox (8.25859pt too high) detected at line 153
  []
 
 
@@ -1004,7 +1003,7 @@ LaTeX Font Info:    Font shape `OT1/Caladea-TLF/m/it' will be
 \openout4 = `presentacion_array_distribuido.vrb'.
 
  (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1012,7 +1011,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [25
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1020,7 +1019,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [26
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1028,7 +1027,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [27
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1036,7 +1035,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [28
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1044,7 +1043,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [29
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1052,7 +1051,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [30
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (25.93321pt too high) detected at line 274
+Overfull \vbox (25.37102pt too high) detected at line 274
  []
 
 
@@ -1060,7 +1059,7 @@ Overfull \vbox (25.93321pt too high) detected at line 274
 [31
 
 ]
-Overfull \vbox (9.9692pt too high) detected at line 329
+Overfull \vbox (11.055pt too high) detected at line 329
  []
 
 
@@ -1068,7 +1067,7 @@ Overfull \vbox (9.9692pt too high) detected at line 329
 [32
 
 ]
-Overfull \vbox (9.9692pt too high) detected at line 329
+Overfull \vbox (11.055pt too high) detected at line 329
  []
 
 
@@ -1076,7 +1075,7 @@ Overfull \vbox (9.9692pt too high) detected at line 329
 [33
 
 ]
-Overfull \vbox (9.9692pt too high) detected at line 329
+Overfull \vbox (11.055pt too high) detected at line 329
  []
 
 
@@ -1084,7 +1083,7 @@ Overfull \vbox (9.9692pt too high) detected at line 329
 [34
 
 ]
-Overfull \vbox (9.9692pt too high) detected at line 329
+Overfull \vbox (11.055pt too high) detected at line 329
  []
 
 
@@ -1092,7 +1091,7 @@ Overfull \vbox (9.9692pt too high) detected at line 329
 [35
 
 ]
-Overfull \vbox (9.9692pt too high) detected at line 329
+Overfull \vbox (11.055pt too high) detected at line 329
  []
 
 
@@ -1100,7 +1099,7 @@ Overfull \vbox (9.9692pt too high) detected at line 329
 [36
 
 ]
-Overfull \vbox (16.79752pt too high) detected at line 357
+Overfull \vbox (16.91304pt too high) detected at line 357
  []
 
 
@@ -1108,7 +1107,7 @@ Overfull \vbox (16.79752pt too high) detected at line 357
 [37
 
 {/usr/share/texmf-dist/fonts/enc/dvips/caladea/cld_prieif.enc}]
-Overfull \vbox (16.79752pt too high) detected at line 357
+Overfull \vbox (16.91304pt too high) detected at line 357
  []
 
 
@@ -1116,7 +1115,7 @@ Overfull \vbox (16.79752pt too high) detected at line 357
 [38
 
 ]
-Overfull \vbox (16.79752pt too high) detected at line 357
+Overfull \vbox (16.91304pt too high) detected at line 357
  []
 
 
@@ -1124,7 +1123,7 @@ Overfull \vbox (16.79752pt too high) detected at line 357
 [39
 
 ]
-Overfull \vbox (19.22777pt too high) detected at line 386
+Overfull \vbox (18.0177pt too high) detected at line 386
  []
 
 
@@ -1132,7 +1131,7 @@ Overfull \vbox (19.22777pt too high) detected at line 386
 [40
 
 ]
-Overfull \vbox (19.22777pt too high) detected at line 386
+Overfull \vbox (18.0177pt too high) detected at line 386
  []
 
 
@@ -1140,7 +1139,7 @@ Overfull \vbox (19.22777pt too high) detected at line 386
 [41
 
 ]
-Overfull \vbox (19.22777pt too high) detected at line 386
+Overfull \vbox (18.0177pt too high) detected at line 386
  []
 
 
@@ -1169,25 +1168,109 @@ Overfull \vbox (19.22777pt too high) detected at line 386
 
 ]
 
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+
 [48
 
 ]
+
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
 
 [49
 
 ]
 
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+
 [50
 
 ]
+
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
 
 [51
 
 ]
 
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+
 [52
 
 ]
+
+/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex:481: LaTeX Error: \begin{enumerate} on input line 481 ended by \end{itemize}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.481 \end{frame}
+                 
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
 
 [53
 
@@ -1240,7 +1323,7 @@ LaTeX Font Info:    Font shape `OT1/Caladea-TLF/m/it' will be
 LaTeX Font Info:    Font shape `OT1/Caladea-TLF/m/it' will be
 (Font)              scaled to size 5.0pt on input line 628.
 
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1248,7 +1331,7 @@ Overfull \vbox (58.90398pt too high) detected at line 628
 [61
 
 ]
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1256,7 +1339,7 @@ Overfull \vbox (58.90398pt too high) detected at line 628
 [62
 
 ]
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1264,7 +1347,7 @@ Overfull \vbox (58.90398pt too high) detected at line 628
 [63
 
 ]
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1272,7 +1355,7 @@ Overfull \vbox (58.90398pt too high) detected at line 628
 [64
 
 ]
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1280,7 +1363,7 @@ Overfull \vbox (58.90398pt too high) detected at line 628
 [65
 
 ]
-Overfull \vbox (58.90398pt too high) detected at line 628
+Overfull \vbox (58.72743pt too high) detected at line 628
  []
 
 
@@ -1307,7 +1390,7 @@ LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              for symbol `textbraceleft' on input line 23.
 
 )
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1315,7 +1398,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 [68
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1323,7 +1406,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 [69
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1331,7 +1414,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 [70
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1339,7 +1422,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 [71
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1347,7 +1430,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 [72
 
 ] (./presentacion_array_distribuido.vrb)
-Overfull \vbox (21.73743pt too high) detected at line 676
+Overfull \vbox (21.29076pt too high) detected at line 676
  []
 
 
@@ -1365,7 +1448,7 @@ Overfull \vbox (21.73743pt too high) detected at line 676
 \openout4 = `presentacion_array_distribuido.vrb'.
 
  (./presentacion_array_distribuido.vrb)
-Overfull \vbox (8.58943pt too high) detected at line 719
+Overfull \vbox (7.9148pt too high) detected at line 719
  []
 
 
@@ -1373,31 +1456,55 @@ Overfull \vbox (8.58943pt too high) detected at line 719
 [75
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [76
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [77
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [78
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [79
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [80
 
 ]
+Overfull \vbox (68.77112pt too high) detected at line 771
+ []
+
+
 
 [81
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1405,7 +1512,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [82
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1413,7 +1520,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [83
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1421,7 +1528,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [84
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1429,7 +1536,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [85
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1437,7 +1544,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [86
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1445,7 +1552,7 @@ Overfull \vbox (94.0874pt too high) detected at line 809
 [87
 
 ]
-Overfull \vbox (94.0874pt too high) detected at line 809
+Overfull \vbox (95.72339pt too high) detected at line 807
  []
 
 
@@ -1475,19 +1582,25 @@ L3 programming layer <2025-01-18>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package rerunfilecheck Info: File `presentacion_array_distribuido.out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+
+Package rerunfilecheck Warning: File `presentacion_array_distribuido.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `presentacion_array_distribuido.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 30685 strings out of 475109
- 617670 string characters out of 5765326
- 1226251 words of memory out of 5000000
- 52851 multiletter control sequences out of 15000+600000
+ 30674 strings out of 475109
+ 617434 string characters out of 5765326
+ 1224617 words of memory out of 5000000
+ 52844 multiletter control sequences out of 15000+600000
  616681 words of font info for 97 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
  128i,13n,123p,511b,1437s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/huerta/caladea/Caladea-Italic.pfb></usr/share/texmf-dist/fonts/type1/huerta/caladea/Caladea-Regular.pfb></usr/share/texmf-dist/fonts/type1/google/carlito/Crlt-Bold.pfb></usr/share/texmf-dist/fonts/type1/google/carlito/Crlt-Regular.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on presentacion_array_distribuido.pdf (89 pages, 624545 bytes).
+Output written on presentacion_array_distribuido.pdf (89 pages, 620538 bytes).
 PDF statistics:
  599 PDF objects out of 1000 (max. 8388607)
  466 compressed objects within 5 object streams

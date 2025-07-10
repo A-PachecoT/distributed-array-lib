@@ -1,4 +1,4 @@
-\frametitle{Logs del Sistema}
+\frametitle{System Logs}
 \begin{lstlisting}[style=terminal]
 master.log
 INFO: Master node started on port 5000

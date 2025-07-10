@@ -402,12 +402,6 @@ INPUT /usr/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-INPUT ./presentacion_array_distribuido.out
-INPUT ./presentacion_array_distribuido.out
-INPUT presentacion_array_distribuido.out
-INPUT presentacion_array_distribuido.out
-INPUT ./presentacion_array_distribuido.out
-INPUT ./presentacion_array_distribuido.out
 OUTPUT presentacion_array_distribuido.out
 INPUT /usr/share/texmf-dist/tex/latex/translator/translator-basic-dictionary-English.dict
 INPUT /usr/share/texmf-dist/tex/latex/translator/translator-basic-dictionary-English.dict

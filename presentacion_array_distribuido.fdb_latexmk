@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1752168001.25034 "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" "presentacion_array_distribuido.pdf" "presentacion_array_distribuido" 1752168005.66964 0
-  "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" 1752168000.32512 23539 378fbf017820051bf9f0bba4c557559b ""
+["pdflatex"] 1752171698.61803 "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" "presentacion_array_distribuido.pdf" "presentacion_array_distribuido" 1752171703.20177 2
+  "/home/sergio/Documents/seven/distributed/final/distributed-array-lib/presentacion_array_distribuido.tex" 1752168549.15207 22939 5c36157b08840033771b0ce8ee90a7ad ""
   "/usr/share/texmf-dist/fonts/enc/dvips/caladea/cld_prieif.enc" 1742685315 2909 0d9a00ce3f1df725b182b15dd24bf4a5 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/carlito/crlt_j4hweq.enc" 1742685315 3199 785d1f4f03ee0bb70108af8679871db0 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/carlito/crlt_zisnlb.enc" 1742685315 3105 fe84215d6e1e68b95a7d9a8041ee418c ""
@@ -264,11 +264,11 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1752123434 2030637 c94fb9ed8ceb01117b4e3ff3172949a4 ""
   "assets/Uni-logo_transparente_granate.png" 1752097206.3795 380921 93218426419f855600d23c79b411e8f0 ""
   "beamerthemesintef.sty" 1752097206.3855 9592 b5d7fac7750fd65cb83eaf258a11555f ""
-  "presentacion_array_distribuido.aux" 1752168005.57177 3421 61f921af5e7ab21b226f0153ab413b77 "pdflatex"
-  "presentacion_array_distribuido.nav" 1752168005.57265 2340 c356b2ad165430705571ca9c42d8784c "pdflatex"
-  "presentacion_array_distribuido.out" 1752168001.76116 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "presentacion_array_distribuido.tex" 1752168000.32512 23539 378fbf017820051bf9f0bba4c557559b ""
-  "presentacion_array_distribuido.vrb" 1752168005.1215 681 916e3a5eaa5385bf1c50ae07dfc715de "pdflatex"
+  "presentacion_array_distribuido.aux" 1752171703.07275 3292 6c158271b9a655b7d4392fa499e36c4a "pdflatex"
+  "presentacion_array_distribuido.nav" 1752171703.07347 2247 51dcbc2223a8394985ce943b3ea934ef "pdflatex"
+  "presentacion_array_distribuido.out" 1752171699.17043 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "presentacion_array_distribuido.tex" 1752168549.15207 22939 5c36157b08840033771b0ce8ee90a7ad ""
+  "presentacion_array_distribuido.vrb" 1752171702.53176 676 1554004e6095aa487d91b064bdafb41b "pdflatex"
   "sintefcolor.sty" 1752097206.3985 989 221bdac9a199f603caea4b6935b2e588 ""
   (generated)
   "presentacion_array_distribuido.aux"
@@ -280,4 +280,3 @@
   "presentacion_array_distribuido.toc"
   "presentacion_array_distribuido.vrb"
   (rewritten before read)
-  "presentacion_array_distribuido.vrb"
